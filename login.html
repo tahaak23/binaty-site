@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaty — Connexion</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--white:#f9fdf9;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);border-radius:16px;padding:40px;width:100%;max-width:400px;margin:20px;}
+.logo{font-family:'Playfair Display',serif;font-size:28px;text-align:center;margin-bottom:8px;}
+.logo span{color:var(--g3);}
+.subtitle{text-align:center;color:var(--g4);font-size:14px;margin-bottom:32px;}
+.form-group{margin-bottom:16px;}
+label{display:block;font-size:12px;color:var(--g4);margin-bottom:6px;}
+input{width:100%;background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.2);border-radius:10px;padding:12px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+input:focus{border-color:var(--g3);}
+.btn{width:100%;background:linear-gradient(135deg,var(--g2),var(--g3));border:none;border-radius:10px;padding:14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;cursor:pointer;margin-top:8px;}
+.error{background:rgba(184,50,50,0.15);border:0.5px solid rgba(184,50,50,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff8080;margin-bottom:16px;display:none;}
+.back{text-align:center;margin-top:20px;font-size:13px;color:var(--g4);}
+.back a{color:var(--g3);text-decoration:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Bina<span>ty</span></div>
+  <div class="subtitle">Espace promoteur</div>
+  <div class="error" id="errorMsg"></div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="vous@exemple.com">
+  </div>
+  <div class="form-group">
+    <label>Mot de passe</label>
+    <input type="password" id="password" placeholder="••••••••">
+  </div>
+  <button class="btn" id="loginBtn" onclick="login()">Se connecter</button>
+  <div class="back"><a href="index.html">← Retour à l'accueil</a></div>
+</div>
+<script>
+const API = 'https://buildra.onrender.com';
+if(localStorage.getItem('binaty_user')) window.location.href = 'dashboard.html';
+document.addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+async function login() {
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if(!email||!password){showError('Veuillez remplir tous les champs.');return;}
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span> Connexion...';
+  btn.disabled = true;
+  document.getElementById('errorMsg').style.display='none';
+  try {
+    const res = await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data = await res.json();
+    if(data.success){
+      localStorage.setItem('binaty_user',JSON.stringify({nom:data.nom,id:data.id,email}));
+      window.location.href='dashboard.html';
+    } else {
+      showError(data.error||'Email ou mot de passe incorrect.');
+      btn.innerHTML='Se connecter';btn.disabled=false;
+    }
+  } catch(e){showError('Erreur de connexion.');btn.innerHTML='Se connecter';btn.disabled=false;}
+}
+function showError(msg){const el=document.getElementById('errorMsg');el.textContent=msg;el.style.display='block';}
+</script>
+</body>
+</html>

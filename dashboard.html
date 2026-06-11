@@ -289,6 +289,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 
 <script>
 const API = 'https://buildra.onrender.com';
+const user = JSON.parse(localStorage.getItem('binaty_user') || 'null');
+if(!user) window.location.href = 'login.html';
 
 async function loadData() {
   const btn = document.getElementById('refreshBtn');
