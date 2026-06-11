@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaty — Contrôlez vos chantiers sans vous déplacer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --g0: #0a1a10;
+  --g1: #1a3a2a;
+  --g2: #2d6b4a;
+  --g3: #4a9065;
+  --g4: #7fc4a0;
+  --g5: #b8d9c5;
+  --g6: #eef6f1;
+  --white: #f9fdf9;
+  --warn: #c47a00;
+  --danger: #b83232;
+  --radius: 14px;
+  --mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--g0);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 5%;
+  background: rgba(10,26,16,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(127,196,160,0.1);
+}
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); letter-spacing: -0.5px; }
+.nav-logo span { color: var(--g3); }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { color: var(--g5); font-size: 14px; text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  background: var(--g3); color: var(--white); border: none;
+  padding: 10px 22px; border-radius: 8px; font-size: 14px;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: background .2s;
+}
+.nav-cta:hover { background: var(--g2); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; text-align: center;
+  padding: 120px 5% 80px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(74,144,101,0.18) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 80% 80%, rgba(45,107,74,0.12) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: linear-gradient(rgba(127,196,160,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(127,196,160,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(74,144,101,0.15); border: 0.5px solid rgba(74,144,101,0.4);
+  padding: 7px 16px; border-radius: 20px; font-size: 12px;
+  color: var(--g4); letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 28px; position: relative; z-index: 1;
+  animation: fadeUp 0.8s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--g3); animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 7vw, 82px);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -2px;
+  position: relative; z-index: 1;
+  animation: fadeUp 0.9s 0.1s ease both;
+}
+.hero h1 em { font-style: normal; color: var(--g3); }
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px); color: var(--g5);
+  max-width: 560px; line-height: 1.6; margin-top: 20px;
+  position: relative; z-index: 1;
+  animation: fadeUp 1s 0.2s ease both;
+}
+.hero-actions {
+  display: flex; gap: 14px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+  position: relative; z-index: 1;
+  animation: fadeUp 1s 0.3s ease both;
+}
+.btn-primary {
+  background: var(--g3); color: var(--white);
+  border: none; padding: 16px 32px; border-radius: 10px;
+  font-size: 16px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; font-weight: 500;
+  transition: all .25s; display: flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: var(--g2); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--g4);
+  border: 0.5px solid rgba(127,196,160,0.3); padding: 16px 32px; border-radius: 10px;
+  font-size: 16px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all .25s;
+}
+.btn-ghost:hover { border-color: var(--g4); color: var(--white); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: flex; justify-content: center; gap: 0;
+  border-top: 0.5px solid rgba(127,196,160,0.12);
+  border-bottom: 0.5px solid rgba(127,196,160,0.12);
+  background: rgba(26,58,42,0.3);
+  position: relative; z-index: 1;
+  animation: fadeUp 1s 0.4s ease both;
+}
+.stat-item {
+  flex: 1; max-width: 200px; text-align: center;
+  padding: 24px 20px;
+  border-right: 0.5px solid rgba(127,196,160,0.12);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--g3); }
+.stat-label { font-size: 12px; color: var(--g5); margin-top: 4px; letter-spacing: 0.5px; }
+
+/* ── SECTION TITLES ── */
+section { padding: 96px 5%; }
+.section-eyebrow {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--g3); margin-bottom: 14px; font-family: var(--mono);
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 48px); font-weight: 700;
+  line-height: 1.15; letter-spacing: -1px;
+}
+.section-title em { font-style: normal; color: var(--g3); }
+
+/* ── PROBLÈME ── */
+.problem { background: var(--g0); }
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 48px; }
+.problem-card {
+  background: rgba(26,58,42,0.2); border: 0.5px solid rgba(127,196,160,0.1);
+  border-radius: var(--radius); padding: 28px;
+  transition: border-color .3s;
+}
+.problem-card:hover { border-color: rgba(127,196,160,0.3); }
+.problem-icon { font-size: 28px; margin-bottom: 14px; }
+.problem-card h3 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+.problem-card p { font-size: 14px; color: var(--g5); line-height: 1.6; }
+
+/* ── SOLUTION / FLUX ── */
+.solution { background: rgba(26,58,42,0.15); }
+.flux { display: flex; align-items: flex-start; gap: 0; margin-top: 56px; overflow-x: auto; }
+.flux-step {
+  flex: 1; min-width: 140px; text-align: center; position: relative; padding: 0 10px;
+}
+.flux-step::after {
+  content: ''; position: absolute; top: 28px; right: -12px;
+  width: 24px; height: 2px; background: linear-gradient(90deg, var(--g2), transparent);
+}
+.flux-step:last-child::after { display: none; }
+.flux-icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: var(--g1); border: 0.5px solid rgba(127,196,160,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin: 0 auto 14px; transition: all .3s;
+}
+.flux-step:hover .flux-icon { background: var(--g2); border-color: var(--g3); transform: translateY(-4px); }
+.flux-step h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.flux-step p { font-size: 12px; color: var(--g5); line-height: 1.5; }
+.flux-num { font-family: var(--mono); font-size: 10px; color: var(--g3); margin-bottom: 8px; }
+
+/* ── FEATURES ── */
+.features { background: var(--g0); }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 48px; }
+.feature-card {
+  background: rgba(26,58,42,0.2); border: 0.5px solid rgba(127,196,160,0.1);
+  border-radius: var(--radius); padding: 28px;
+  transition: all .3s; position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--g2), var(--g3));
+  transform: scaleX(0); transition: transform .3s; transform-origin: left;
+}
+.feature-card:hover { border-color: rgba(127,196,160,0.25); transform: translateY(-4px); }
+.feature-card:hover::before { transform: scaleX(1); }
+.feature-icon { font-size: 28px; margin-bottom: 16px; color: var(--g3); }
+.feature-card h3 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--g5); line-height: 1.6; }
+
+/* ── ALERTE DEMO ── */
+.alert-demo {
+  background: rgba(26,58,42,0.15);
+  display: flex; align-items: center;
+}
+.alert-demo-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; width: 100%; max-width: 1100px; margin: 0 auto; }
+.phone-mockup {
+  background: var(--g1); border: 0.5px solid rgba(127,196,160,0.2);
+  border-radius: 24px; padding: 24px; max-width: 320px; margin: 0 auto;
+}
+.phone-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 0.5px solid rgba(127,196,160,0.15); }
+.phone-logo { font-family: 'Playfair Display', serif; font-size: 16px; }
+.phone-logo span { color: var(--g3); }
+.alert-item {
+  background: rgba(10,26,16,0.6); border-radius: 12px; padding: 14px;
+  margin-bottom: 10px; border-left: 3px solid transparent;
+  animation: slideIn 0.5s ease both;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
+.alert-danger { border-left-color: var(--danger); }
+.alert-warn { border-left-color: var(--warn); }
+.alert-ok { border-left-color: var(--g3); }
+.alert-item-title { font-size: 13px; font-weight: 500; }
+.alert-item-desc { font-size: 12px; color: var(--g5); margin-top: 4px; }
+.alert-item-time { font-size: 11px; color: var(--g2); margin-top: 6px; font-family: var(--mono); }
+.alert-demo-text .section-title { margin-bottom: 20px; }
+.benefit { display: flex; gap: 14px; margin-bottom: 20px; }
+.benefit-icon { width: 36px; height: 36px; background: rgba(74,144,101,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+.benefit h4 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.benefit p { font-size: 13px; color: var(--g5); line-height: 1.5; }
+
+/* ── PRICING ── */
+.pricing { background: var(--g0); text-align: center; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 48px; max-width: 900px; margin-left: auto; margin-right: auto; }
+.price-card {
+  background: rgba(26,58,42,0.2); border: 0.5px solid rgba(127,196,160,0.12);
+  border-radius: var(--radius); padding: 32px 24px; position: relative;
+  transition: all .3s;
+}
+.price-card.featured {
+  background: rgba(74,144,101,0.12); border-color: rgba(74,144,101,0.4);
+  transform: translateY(-8px);
+}
+.price-card.featured::before {
+  content: 'Populaire'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--g3); color: var(--white); font-size: 11px; padding: 4px 14px;
+  border-radius: 20px; letter-spacing: 1px;
+}
+.price-name { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--g4); margin-bottom: 12px; font-family: var(--mono); }
+.price-amount { font-family: 'Playfair Display', serif; font-size: 42px; color: var(--white); }
+.price-amount span { font-size: 16px; color: var(--g5); font-family: 'DM Sans', sans-serif; }
+.price-desc { font-size: 13px; color: var(--g5); margin: 10px 0 20px; }
+.price-features { list-style: none; text-align: left; }
+.price-features li { font-size: 13px; color: var(--g5); padding: 8px 0; border-bottom: 0.5px solid rgba(127,196,160,0.08); display: flex; gap: 8px; align-items: center; }
+.price-features li::before { content: '✓'; color: var(--g3); font-weight: 600; }
+.price-btn { width: 100%; margin-top: 24px; }
+
+/* ── CTA FINAL ── */
+.cta-final {
+  background: linear-gradient(135deg, var(--g1) 0%, var(--g0) 100%);
+  text-align: center; padding: 100px 5%;
+  border-top: 0.5px solid rgba(127,196,160,0.12);
+}
+.cta-final h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 56px); font-weight: 900; letter-spacing: -1.5px; margin-bottom: 16px; }
+.cta-final p { color: var(--g5); font-size: 18px; max-width: 500px; margin: 0 auto 36px; line-height: 1.6; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--g0); padding: 32px 5%;
+  border-top: 0.5px solid rgba(127,196,160,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 18px; }
+.footer-logo span { color: var(--g3); }
+footer p { font-size: 13px; color: var(--g2); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .problem-grid, .features-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .alert-demo-inner { grid-template-columns: 1fr; }
+  .flux { flex-direction: column; align-items: center; gap: 24px; }
+  .flux-step::after { display: none; }
+  .price-card.featured { transform: none; }
+  footer { flex-direction: column; gap: 10px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Build<span>ra</span></div>
+  <ul class="nav-links">
+    <li><a href="#solution">Comment ça marche</a></li>
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+  </ul>
+  <button class="nav-cta">Demander une démo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">
+    <span>Nouveau — Tanger, Maroc</span>
+  </div>
+  <h1>Votre chantier,<br>sous <em>contrôle total</em>.</h1>
+  <p class="hero-sub">Binaty relie les promoteurs immobiliers à leurs chantiers en temps réel. Photos vérifiées, vocaux analysés, alertes instantanées — sans se déplacer.</p>
+  <div class="hero-actions">
+    <button class="btn-primary"><i class="ti ti-brand-whatsapp"></i> Démarrer gratuitement</button>
+    <button class="btn-ghost">Voir une démo →</button>
+  </div>
+  <div class="stats-bar" style="margin-top:56px;border-radius:14px;width:100%;max-width:600px;">
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Sans déplacement</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5s</div>
+      <div class="stat-label">Rapport automatique</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Formation requise</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLÈME -->
+<section class="problem" id="problem">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Le problème</div>
+    <div class="section-title">Vous gérez un chantier<br>les yeux <em>fermés</em>.</div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🚗</div>
+        <h3>Déplacements constants</h3>
+        <p>Vous passez des heures par semaine sur la route juste pour voir où en est votre chantier. Du temps perdu qui coûte cher.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📱</div>
+        <h3>WhatsApp désorganisé</h3>
+        <p>Des centaines de photos en désordre, des messages perdus, aucune visibilité claire sur l'avancement réel du projet.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🤷</div>
+        <h3>Dépendance totale</h3>
+        <p>Vous dépendez à 100% de la parole de votre chef de chantier. Impossible de vérifier sans vous déplacer.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⏰</div>
+        <h3>Retards non détectés</h3>
+        <p>Les problèmes sont signalés trop tard. Un retard de 2 jours non détecté peut coûter des semaines sur le planning final.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;">
+    <div class="section-eyebrow">La solution</div>
+    <div class="section-title">Simple pour le terrain.<br><em>Puissant</em> pour vous.</div>
+    <p style="color:var(--g5);font-size:16px;max-width:520px;margin:16px auto 0;line-height:1.6;">Votre équipe utilise WhatsApp comme d'habitude. Binaty fait le reste.</p>
+
+    <div class="flux">
+      <div class="flux-step">
+        <div class="flux-num">01</div>
+        <div class="flux-icon"><i class="ti ti-microphone" style="color:var(--g3);font-size:24px;"></i></div>
+        <h4>Vocal ou photo</h4>
+        <p>Le chef envoie un message en darija sur WhatsApp Binaty</p>
+      </div>
+      <div class="flux-step">
+        <div class="flux-num">02</div>
+        <div class="flux-icon"><i class="ti ti-wave-sine" style="color:var(--g3);font-size:24px;"></i></div>
+        <h4>Transcription IA</h4>
+        <p>Binaty comprend le darija et transcrit automatiquement</p>
+      </div>
+      <div class="flux-step">
+        <div class="flux-num">03</div>
+        <div class="flux-icon"><i class="ti ti-eye" style="color:var(--g3);font-size:24px;"></i></div>
+        <h4>Analyse visuelle</h4>
+        <p>L'IA vérifie la photo et compare avec la déclaration</p>
+      </div>
+      <div class="flux-step">
+        <div class="flux-num">04</div>
+        <div class="flux-icon"><i class="ti ti-map-pin" style="color:var(--g3);font-size:24px;"></i></div>
+        <h4>GPS vérifié</h4>
+        <p>Photo prise sur le chantier ? Binaty le confirme</p>
+      </div>
+      <div class="flux-step">
+        <div class="flux-num">05</div>
+        <div class="flux-icon"><i class="ti ti-bell" style="color:var(--g3);font-size:24px;"></i></div>
+        <h4>Rapport instant</h4>
+        <p>Vous recevez un rapport clair sur votre dashboard</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Fonctionnalités</div>
+    <div class="section-title">Contrôle <em>infaillible</em>.</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-brand-whatsapp"></i></div>
+        <h3>WhatsApp natif</h3>
+        <p>Aucune installation pour votre équipe. Ils envoient sur WhatsApp comme d'habitude. Zéro formation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-microphone"></i></div>
+        <h3>Vocaux en darija</h3>
+        <p>Binaty comprend et transcrit les messages vocaux en darija marocain automatiquement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-map-pin"></i></div>
+        <h3>Géolocalisation GPS</h3>
+        <p>Chaque photo est vérifiée. Si elle n'est pas prise sur le chantier, vous êtes alerté immédiatement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-photo-scan"></i></div>
+        <h3>Analyse IA des photos</h3>
+        <p>L'intelligence artificielle compare ce que le chef déclare avec ce qu'elle voit réellement sur la photo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-star"></i></div>
+        <h3>Score de fiabilité</h3>
+        <p>Chaque professionnel accumule un score basé sur des données réelles. Impossible à tricher.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-chart-bar"></i></div>
+        <h3>Rapports automatiques</h3>
+        <p>Chaque soir, vous recevez un résumé complet de l'avancement de vos chantiers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO ALERTES -->
+<section class="alert-demo">
+  <div class="alert-demo-inner">
+    <div class="phone-mockup">
+      <div class="phone-header">
+        <div class="phone-logo">Build<span>ra</span></div>
+        <span style="font-size:12px;color:var(--g4);margin-left:auto;">Chantier Tanger A</span>
+      </div>
+      <div class="alert-item alert-danger" style="animation-delay:0.1s;">
+        <div class="alert-item-title">🔴 Incohérence détectée</div>
+        <div class="alert-item-desc">Chef déclare toit 100% — IA estime 78%</div>
+        <div class="alert-item-time">Aujourd'hui · 13h22</div>
+      </div>
+      <div class="alert-item alert-warn" style="animation-delay:0.3s;">
+        <div class="alert-item-title">⚠️ Retard matériaux</div>
+        <div class="alert-item-desc">Livraison ciment reportée à demain</div>
+        <div class="alert-item-time">Aujourd'hui · 11h05</div>
+      </div>
+      <div class="alert-item alert-ok" style="animation-delay:0.5s;">
+        <div class="alert-item-title">✅ Présence confirmée</div>
+        <div class="alert-item-desc">Photo géolocalisée — chantier vérifié</div>
+        <div class="alert-item-time">Aujourd'hui · 08h31</div>
+      </div>
+      <div class="alert-item alert-ok" style="animation-delay:0.7s;">
+        <div class="alert-item-title">📊 Avancement : 67%</div>
+        <div class="alert-item-desc">+5% depuis hier — dans les délais</div>
+        <div class="alert-item-time">Hier · 18h00</div>
+      </div>
+    </div>
+
+    <div class="alert-demo-text">
+      <div class="section-eyebrow">Alertes en temps réel</div>
+      <div class="section-title">Vous savez <em>tout</em>,<br>depuis votre canapé.</div>
+      <div class="benefit" style="margin-top:28px;">
+        <div class="benefit-icon"><i class="ti ti-shield-check" style="color:var(--g3);"></i></div>
+        <div>
+          <h4>Zéro mensonge possible</h4>
+          <p>L'IA détecte les incohérences entre ce qui est déclaré et ce qui est visible sur la photo.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon"><i class="ti ti-clock" style="color:var(--g3);"></i></div>
+        <div>
+          <h4>Alertes instantanées</h4>
+          <p>Dès qu'un problème est détecté, vous êtes notifié sur WhatsApp et dans l'app.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon"><i class="ti ti-history" style="color:var(--g3);"></i></div>
+        <div>
+          <h4>Historique complet</h4>
+          <p>Chaque photo, chaque rapport, chaque décision — archivé automatiquement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-eyebrow">Tarifs</div>
+    <div class="section-title">Simple et <em>transparent</em>.</div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">500 <span>MAD/mois</span></div>
+        <div class="price-desc">Pour 1 chantier actif</div>
+        <ul class="price-features">
+          <li>1 chantier</li>
+          <li>WhatsApp Bot</li>
+          <li>Analyse photos IA</li>
+          <li>Rapports journaliers</li>
+          <li>Alertes WhatsApp</li>
+        </ul>
+        <button class="btn-ghost price-btn" style="padding:12px;">Commencer</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-name">Pro</div>
+        <div class="price-amount">1200 <span>MAD/mois</span></div>
+        <div class="price-desc">Pour 3 chantiers actifs</div>
+        <ul class="price-features">
+          <li>3 chantiers</li>
+          <li>Tout Starter inclus</li>
+          <li>Vérification GPS</li>
+          <li>Score fiabilité équipe</li>
+          <li>Profils professionnels</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <button class="btn-primary price-btn" style="justify-content:center;">Commencer →</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Entreprise</div>
+        <div class="price-amount" style="font-size:28px;padding-top:8px;">Sur mesure</div>
+        <div class="price-desc">Chantiers illimités</div>
+        <ul class="price-features">
+          <li>Chantiers illimités</li>
+          <li>Tout Pro inclus</li>
+          <li>API personnalisée</li>
+          <li>Tableau de bord multi-sites</li>
+          <li>Account manager dédié</li>
+          <li>Formation équipe</li>
+        </ul>
+        <button class="btn-ghost price-btn" style="padding:12px;">Nous contacter</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Prêt à voir votre<br>chantier en <em style="color:var(--g3);">temps réel</em> ?</h2>
+  <p>Rejoignez les premiers promoteurs de Tanger qui contrôlent leurs chantiers depuis leur téléphone.</p>
+  <button class="btn-primary" style="margin:0 auto;font-size:16px;padding:18px 40px;">
+    <i class="ti ti-brand-whatsapp"></i> Demander une démo gratuite
+  </button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Build<span>ra</span></div>
+  <p>© 2025 Binaty. Tanger, Maroc.</p>
+  <p style="font-size:13px;color:var(--g2);">contact@buildra.ma</p>
+</footer>
+
+</body>
+</html>

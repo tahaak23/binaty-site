@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaty — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{
+  --g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--g5:#b8d9c5;
+  --white:#f9fdf9;--warn:#c47a00;--danger:#b83232;--r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--g1);border-right:0.5px solid rgba(127,196,160,0.1);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;padding:24px 0;}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:22px;padding:0 20px 24px;border-bottom:0.5px solid rgba(127,196,160,0.1);}
+.sidebar-logo span{color:var(--g3);}
+.sidebar-nav{padding:16px 10px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--g4);cursor:pointer;transition:all .2s;margin-bottom:4px;}
+.nav-item:hover,.nav-item.active{background:rgba(74,144,101,0.12);color:var(--white);}
+.nav-item.active{border-left:2.5px solid var(--g3);}
+.nav-item i{font-size:18px;}
+.sidebar-footer{padding:16px 20px;border-top:0.5px solid rgba(127,196,160,0.1);font-size:12px;color:var(--g2);}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding:28px;overflow-y:auto;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:24px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.notif-btn{width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;position:relative;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);position:absolute;top:6px;right:6px;}
+.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;}
+.refresh-btn{display:flex;align-items:center;gap:6px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.2);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--g4);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.refresh-btn:hover{border-color:var(--g3);color:var(--white);}
+.refresh-btn.loading i{animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--accent);}
+.stat-icon{width:38px;height:38px;border-radius:10px;background:rgba(74,144,101,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;color:var(--accent);}
+.stat-val{font-size:26px;font-weight:700;font-family:'Playfair Display',serif;color:var(--accent);}
+.stat-lbl{font-size:12px;color:var(--g4);margin-top:2px;}
+.stat-trend{font-size:11px;color:var(--g3);margin-top:6px;display:flex;align-items:center;gap:4px;}
+
+/* GRID 2 COL */
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:24px;}
+
+/* CARDS */
+.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:20px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:500;color:var(--white);display:flex;align-items:center;gap:8px;}
+.card-title i{color:var(--g3);font-size:16px;}
+.card-badge{font-size:11px;background:rgba(74,144,101,0.12);color:var(--g3);padding:3px 10px;border-radius:20px;}
+
+/* CHANTIERS LIST */
+.chantier-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(10,26,16,0.4);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.chantier-item:hover{background:rgba(10,26,16,0.7);}
+.chantier-avatar{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.chantier-info{flex:1;min-width:0;}
+.chantier-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chantier-sub{font-size:11px;color:var(--g4);margin-top:2px;}
+.chantier-right{text-align:right;flex-shrink:0;}
+.progress-bar{width:80px;height:5px;background:rgba(127,196,160,0.1);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.progress-fill-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--g2),var(--g3));}
+.progress-pct{font-size:11px;color:var(--g3);}
+
+/* STATUS BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:500;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.badge-ok{background:rgba(74,144,101,0.12);color:var(--g3);}
+.badge-ok::before{background:var(--g3);}
+.badge-warn{background:rgba(196,122,0,0.12);color:var(--warn);}
+.badge-warn::before{background:var(--warn);}
+.badge-danger{background:rgba(184,50,50,0.12);color:var(--danger);}
+.badge-danger::before{background:var(--danger);}
+
+/* RAPPORTS */
+.rapport-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;margin-bottom:6px;background:rgba(10,26,16,0.3);}
+.rapport-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.rapport-icon.ok{background:rgba(74,144,101,0.12);}
+.rapport-icon.warn{background:rgba(196,122,0,0.12);}
+.rapport-icon.danger{background:rgba(184,50,50,0.12);}
+.rapport-content{flex:1;min-width:0;}
+.rapport-title{font-size:12px;font-weight:500;}
+.rapport-sub{font-size:11px;color:var(--g4);margin-top:2px;line-height:1.4;}
+.rapport-time{font-size:10px;color:var(--g2);white-space:nowrap;flex-shrink:0;}
+
+/* SCORE RING */
+.score-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0;}
+.score-ring{position:relative;width:120px;height:120px;margin-bottom:12px;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.score-ring-val .val{font-size:28px;font-weight:700;color:var(--g3);font-family:'Playfair Display',serif;}
+.score-ring-val .lbl{font-size:10px;color:var(--g4);}
+.score-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;}
+.score-detail{background:rgba(10,26,16,0.4);border-radius:8px;padding:10px;text-align:center;}
+.score-detail .sd-val{font-size:16px;font-weight:600;color:var(--g3);}
+.score-detail .sd-lbl{font-size:10px;color:var(--g4);margin-top:2px;}
+
+/* ALERTES */
+.alerte-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;margin-bottom:6px;}
+.alerte-item.high{background:rgba(184,50,50,0.08);border-left:2px solid var(--danger);}
+.alerte-item.medium{background:rgba(196,122,0,0.08);border-left:2px solid var(--warn);}
+.alerte-item.low{background:rgba(74,144,101,0.08);border-left:2px solid var(--g3);}
+.alerte-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.alerte-title{font-size:12px;font-weight:500;}
+.alerte-sub{font-size:11px;color:var(--g4);margin-top:2px;}
+
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,rgba(127,196,160,0.05) 25%,rgba(127,196,160,0.1) 50%,rgba(127,196,160,0.05) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+@keyframes shimmer{to{background-position:-200% 0}}
+.skeleton-line{height:14px;border-radius:4px;margin-bottom:8px;}
+.skeleton-line.w60{width:60%;}
+.skeleton-line.w80{width:80%;}
+.skeleton-line.w40{width:40%;}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:32px 16px;color:var(--g2);}
+.empty i{font-size:40px;margin-bottom:12px;display:block;}
+.empty p{font-size:13px;}
+
+/* API STATUS */
+.api-status{display:flex;align-items:center;gap:6px;font-size:11px;padding:4px 10px;border-radius:6px;}
+.api-status.ok{background:rgba(74,144,101,0.1);color:var(--g3);}
+.api-status.err{background:rgba(184,50,50,0.1);color:var(--danger);}
+.api-status.loading{background:rgba(127,196,160,0.05);color:var(--g4);}
+.api-dot{width:6px;height:6px;border-radius:50%;}
+.api-status.ok .api-dot{background:var(--g3);animation:pulse2 2s infinite;}
+.api-status.err .api-dot{background:var(--danger);}
+.api-status.loading .api-dot{background:var(--g4);}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .grid-2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Bina<span>ty</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item"><i class="ti ti-building-warehouse"></i> Chantiers</div>
+    <div class="nav-item"><i class="ti ti-file-text"></i> Rapports</div>
+    <div class="nav-item"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item"><i class="ti ti-users"></i> Équipes</div>
+    <div class="nav-item"><i class="ti ti-chart-bar"></i> Statistiques</div>
+    <div class="nav-item"><i class="ti ti-settings"></i> Paramètres</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div id="apiStatus" class="api-status loading"><div class="api-dot"></div> Connexion...</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Tableau de bord</div>
+      <div style="font-size:12px;color:var(--g4);margin-top:2px;" id="lastUpdate">Chargement...</div>
+    </div>
+    <div class="topbar-right">
+      <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+        <i class="ti ti-refresh"></i> Actualiser
+      </button>
+      <div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
+      <div class="avatar">T</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:var(--g3)">
+      <div class="stat-icon"><i class="ti ti-building-warehouse"></i></div>
+      <div class="stat-val" id="statChantiers">--</div>
+      <div class="stat-lbl">Chantiers actifs</div>
+      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendChantiers">--</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--g4)">
+      <div class="stat-icon"><i class="ti ti-file-text"></i></div>
+      <div class="stat-val" id="statRapports">--</div>
+      <div class="stat-lbl">Rapports générés</div>
+      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendRapports">--</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--warn)">
+      <div class="stat-icon"><i class="ti ti-bell"></i></div>
+      <div class="stat-val" id="statAlertes">--</div>
+      <div class="stat-lbl">Alertes actives</div>
+      <div class="stat-trend" id="trendAlertes">--</div>
+    </div>
+    <div class="stat-card" style="--accent:var(--g5)">
+      <div class="stat-icon"><i class="ti ti-star"></i></div>
+      <div class="stat-val" id="statScore">--</div>
+      <div class="stat-lbl">Score moyen équipes</div>
+      <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
+    </div>
+  </div>
+
+  <!-- GRID 2 COL -->
+  <div class="grid-2">
+
+    <!-- CHANTIERS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-building-warehouse"></i> Mes chantiers</div>
+        <span class="card-badge" id="chantiersCount">--</span>
+      </div>
+      <div id="chantiersList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+        <div class="skeleton skeleton-line w80"></div>
+      </div>
+    </div>
+
+    <!-- SCORE + ALERTES -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-star"></i> Score fiabilité</div>
+        </div>
+        <div class="score-wrap">
+          <div class="score-ring">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(127,196,160,0.1)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="314" id="scoreCircle" stroke-dashoffset="314"/>
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#2d6b4a"/>
+                  <stop offset="100%" style="stop-color:#7fc4a0"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="score-ring-val">
+              <div class="val" id="scoreVal">--</div>
+              <div class="lbl">/ 10</div>
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">Ponctualité</div></div>
+            <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Cohérence</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-bell"></i> Alertes récentes</div>
+          <span class="card-badge" id="alertesCount">--</span>
+        </div>
+        <div id="alertesList">
+          <div class="skeleton skeleton-line w80"></div>
+          <div class="skeleton skeleton-line w60"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RAPPORTS RÉCENTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="ti ti-file-text"></i> Rapports récents</div>
+      <span class="card-badge" id="rapportsCount">--</span>
+    </div>
+    <div id="rapportsList">
+      <div class="skeleton skeleton-line w80"></div>
+      <div class="skeleton skeleton-line w60"></div>
+      <div class="skeleton skeleton-line w80"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const API = 'https://buildra.onrender.com';
+
+async function loadData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading');
+  setStatus('loading','Connexion...');
+
+  // Wake up Render si endormi
+  try { await fetch(API + '/webhook', {method:'GET'}); } catch(e) {}
+
+  try {
+    const [statsRes, chantiersRes, rapportsRes, scoresRes, alertesRes] = await Promise.allSettled([
+      fetch(API + '/api/stats'),
+      fetch(API + '/api/chantiers'),
+      fetch(API + '/api/rapports?limit=5'),
+      fetch(API + '/api/scores'),
+      fetch(API + '/api/alertes?limit=4'),
+    ]);
+
+    setStatus('ok','API connectée');
+    document.getElementById('lastUpdate').textContent = 'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+
+    // STATS
+    if(statsRes.status==='fulfilled' && statsRes.value.ok) {
+      const stats = await statsRes.value.json();
+      animCount('statChantiers', stats.chantiers_actifs || 0);
+      animCount('statRapports', stats.rapports_total || 0);
+      animCount('statAlertes', stats.alertes_actives || 0);
+      document.getElementById('trendChantiers').textContent = `${stats.chantiers_actifs || 0} en cours`;
+      document.getElementById('trendRapports').textContent = `${stats.rapports_aujourd_hui || 0} aujourd'hui`;
+      if(stats.alertes_actives > 0) {
+        document.getElementById('notifDot').style.display = 'block';
+        document.getElementById('trendAlertes').innerHTML = `<span style="color:var(--danger)">${stats.alertes_actives} non traitées</span>`;
+      }
+    } else {
+      renderDemoStats();
+    }
+
+    // CHANTIERS
+    if(chantiersRes.status==='fulfilled' && chantiersRes.value.ok) {
+      const data = await chantiersRes.value.json();
+      renderChantiers(data.chantiers || []);
+    } else {
+      renderDemoChantiers();
+    }
+
+    // RAPPORTS
+    if(rapportsRes.status==='fulfilled' && rapportsRes.value.ok) {
+      const data = await rapportsRes.value.json();
+      renderRapports(data.rapports || []);
+    } else {
+      renderDemoRapports();
+    }
+
+    // SCORES
+    if(scoresRes.status==='fulfilled' && scoresRes.value.ok) {
+      const data = await scoresRes.value.json();
+      renderScores(data.scores || []);
+    } else {
+      renderDemoScore();
+    }
+
+    // ALERTES
+    if(alertesRes.status==='fulfilled' && alertesRes.value.ok) {
+      const data = await alertesRes.value.json();
+      renderAlertes(data.alertes || []);
+    } else {
+      renderDemoAlertes();
+    }
+
+  } catch(e) {
+    setStatus('err','Hors ligne');
+    renderDemoStats();
+    renderDemoChantiers();
+    renderDemoRapports();
+    renderDemoScore();
+    renderDemoAlertes();
+    document.getElementById('lastUpdate').textContent = 'Mode démo — données exemple';
+  }
+
+  btn.classList.remove('loading');
+}
+
+function setStatus(type, text) {
+  const el = document.getElementById('apiStatus');
+  el.className = `api-status ${type}`;
+  el.innerHTML = `<div class="api-dot"></div> ${text}`;
+}
+
+function animCount(id, target) {
+  const el = document.getElementById(id);
+  let current = 0;
+  const step = Math.max(1, Math.floor(target/20));
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current;
+    if(current >= target) clearInterval(timer);
+  }, 50);
+}
+
+function renderChantiers(chantiers) {
+  const el = document.getElementById('chantiersList');
+  document.getElementById('chantiersCount').textContent = chantiers.length + ' chantiers';
+  if(!chantiers.length) { el.innerHTML = '<div class="empty"><i class="ti ti-building-warehouse"></i><p>Aucun chantier actif</p></div>'; return; }
+  el.innerHTML = chantiers.map(c => {
+    const pct = c.avancement_pct || 0;
+    const badge = pct > 70 ? 'badge-ok' : pct > 30 ? 'badge-warn' : 'badge-danger';
+    const btext = pct > 70 ? 'Avancé' : pct > 30 ? 'En cours' : 'Démarrage';
+    return `<div class="chantier-item">
+      <div class="chantier-avatar">🏗️</div>
+      <div class="chantier-info">
+        <div class="chantier-name">${c.nom || 'Chantier'}</div>
+        <div class="chantier-sub">${c.quartier || ''} • Chef: ${c.chef_whatsapp || '--'}</div>
+      </div>
+      <div class="chantier-right">
+        <div class="progress-bar"><div class="progress-fill-bar" style="width:${pct}%"></div></div>
+        <div class="progress-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRapports(rapports) {
+  const el = document.getElementById('rapportsList');
+  document.getElementById('rapportsCount').textContent = rapports.length + ' rapports';
+  if(!rapports.length) { el.innerHTML = '<div class="empty"><i class="ti ti-file-text"></i><p>Aucun rapport disponible</p></div>'; return; }
+  el.innerHTML = rapports.map(r => {
+    const isAlerte = r.alerte === 'oui';
+    const isCoh = r.coherence === 'oui';
+    const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
+    const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${cls}">${icon}</div>
+      <div class="rapport-content">
+        <div class="rapport-title">${r.chantier_id || 'Chantier'} — ${r.type || 'Rapport'}</div>
+        <div class="rapport-sub">${r.resume_fr || r.declaration || 'Rapport généré automatiquement'}</div>
+      </div>
+      <div class="rapport-time">${r.heure || '--'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderScores(scores) {
+  if(!scores.length) { renderDemoScore(); return; }
+  const avg = scores.reduce((a,s) => a + (parseFloat(s.score_global)||0), 0) / scores.length;
+  const score = Math.min(10, avg).toFixed(1);
+  updateScore(score);
+  document.getElementById('scorePonctualite').textContent = (scores[0]?.taux_delais || '--') + '%';
+  document.getElementById('scoreCoherence').textContent = (scores[0]?.taux_coherence || '--') + '%';
+  animCount('statScore', Math.round(avg * 10) / 10);
+}
+
+function renderAlertes(alertes) {
+  const el = document.getElementById('alertesList');
+  document.getElementById('alertesCount').textContent = alertes.length;
+  if(!alertes.length) { el.innerHTML = '<div class="empty"><i class="ti ti-bell"></i><p>Aucune alerte</p></div>'; return; }
+  el.innerHTML = alertes.map(a => {
+    const level = a.niveau || 'low';
+    const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
+    return `<div class="alerte-item ${level}">
+      <div class="alerte-icon">${icon}</div>
+      <div>
+        <div class="alerte-title">${a.type || 'Alerte'}</div>
+        <div class="alerte-sub">${a.message || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateScore(val) {
+  document.getElementById('scoreVal').textContent = val;
+  const pct = val / 10;
+  const circumference = 314;
+  document.getElementById('scoreCircle').style.strokeDashoffset = circumference * (1 - pct);
+}
+
+// DEMO DATA (quand l'API n'est pas disponible)
+function renderDemoStats() {
+  animCount('statChantiers', 3);
+  animCount('statRapports', 27);
+  animCount('statAlertes', 1);
+  document.getElementById('trendChantiers').textContent = '3 en cours';
+  document.getElementById('trendRapports').textContent = '4 aujourd\'hui';
+}
+
+function renderDemoChantiers() {
+  document.getElementById('chantiersCount').textContent = '3 chantiers';
+  document.getElementById('chantiersList').innerHTML = [
+    {nom:'Résidence Al Majd', q:'Malabata', pct:72, chef:'+212 6XX'},
+    {nom:'Villa Achakar', q:'Boukhalef', pct:45, chef:'+212 6XX'},
+    {nom:'Immeuble Centre-ville', q:'Hay Sadik', pct:18, chef:'+212 6XX'},
+  ].map(c => `<div class="chantier-item">
+    <div class="chantier-avatar">🏗️</div>
+    <div class="chantier-info">
+      <div class="chantier-name">${c.nom}</div>
+      <div class="chantier-sub">${c.q} • Chef: ${c.chef}</div>
+    </div>
+    <div class="chantier-right">
+      <div class="progress-bar"><div class="progress-fill-bar" style="width:${c.pct}%"></div></div>
+      <div class="progress-pct">${c.pct}%</div>
+    </div>
+  </div>`).join('');
+}
+
+function renderDemoRapports() {
+  document.getElementById('rapportsCount').textContent = '4 aujourd\'hui';
+  document.getElementById('rapportsList').innerHTML = [
+    {cls:'ok', icon:'✅', titre:'Al Majd — Photo chantier', sub:'Avancement 72% confirmé. Coffrages au 3ème étage terminés.', t:'17:30'},
+    {cls:'warn', icon:'⚠️', titre:'Villa Achakar — Vocal darija', sub:'Chef signale retard livraison ciment. Délai estimé +3 jours.', t:'15:12'},
+    {cls:'ok', icon:'✅', titre:'Al Majd — Présence équipe', sub:'8 ouvriers présents sur site. GPS confirmé.', t:'09:05'},
+    {cls:'danger', icon:'🚨', titre:'Immeuble Centre — Incohérence', sub:'Déclaration non confirmée par photo. Vérification requise.', t:'08:42'},
+  ].map(r => `<div class="rapport-item">
+    <div class="rapport-icon ${r.cls}">${r.icon}</div>
+    <div class="rapport-content">
+      <div class="rapport-title">${r.titre}</div>
+      <div class="rapport-sub">${r.sub}</div>
+    </div>
+    <div class="rapport-time">${r.t}</div>
+  </div>`).join('');
+}
+
+function renderDemoScore() {
+  updateScore(8.4);
+  document.getElementById('scorePonctualite').textContent = '91%';
+  document.getElementById('scoreCoherence').textContent = '88%';
+  animCount('statScore', 8);
+}
+
+function renderDemoAlertes() {
+  document.getElementById('alertesCount').textContent = '1';
+  document.getElementById('alertesList').innerHTML = `
+    <div class="alerte-item medium">
+      <div class="alerte-icon">⚠️</div>
+      <div>
+        <div class="alerte-title">Retard signalé — Villa Achakar</div>
+        <div class="alerte-sub">Livraison ciment reportée de 3 jours</div>
+      </div>
+    </div>
+    <div class="alerte-item low">
+      <div class="alerte-icon">ℹ️</div>
+      <div>
+        <div class="alerte-title">Rapport manquant — Centre-ville</div>
+        <div class="alerte-sub">Aucun rapport reçu depuis 18h hier</div>
+      </div>
+    </div>`;
+}
+
+// Init
+loadData();
+setInterval(loadData, 60000); // Auto refresh toutes les 60s
+</script>
+
+</body>
+</html>
