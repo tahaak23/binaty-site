@@ -292,7 +292,12 @@ const API = 'https://buildra.onrender.com';
 const user = JSON.parse(localStorage.getItem('binaty_user') || 'null');
 if(!user) window.location.href = 'login.html';
 
-async function loadData() {
+function logout() {
+        localStorage.removeItem("binaty_token");
+        localStorage.removeItem("binaty_user");
+        window.location.href = "login.html";
+      }
+      function loadData() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
   setStatus('loading','Connexion...');
