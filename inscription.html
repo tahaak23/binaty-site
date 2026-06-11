@@ -458,7 +458,18 @@ async function submitForm() {
   const btn = document.querySelector('#panel4 .btn-primary');
   btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Création...';
   btn.style.pointerEvents = 'none';
-  await new Promise(r => setTimeout(r, 2000));
+  const data = {
+    nom: document.querySelector('[placeholder="Dupont"]')?.value||'',
+    prenom: document.querySelector('[placeholder="Jean"]')?.value||'',
+    email: document.querySelector('[placeholder="jean@exemple.com"]')?.value||'',
+    whatsapp: document.querySelector('[placeholder="+212 6XX XXX XXX"]')?.value||'',
+    societe: document.querySelector('[placeholder="Votre société"]')?.value||'',
+    ville: document.querySelector('[placeholder="Tanger"]')?.value||'',
+    plan: 'starter'
+  };
+  try {
+    await fetch('https://buildra.onrender.com/api/inscription', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  } catch(e) { console.error(e); }
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panelSuccess').classList.add('active');
   document.getElementById('progressFill').style.width = '100%';
