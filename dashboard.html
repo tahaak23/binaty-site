@@ -297,7 +297,7 @@ function logout() {
         localStorage.removeItem("binaty_user");
         window.location.href = "login.html";
       }
-      function loadData() {
+      async function loadData() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
   setStatus('loading','Connexion...');
