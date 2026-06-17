@@ -13,6 +13,7 @@
   --white:#f9fdf9;--warn:#c47a00;--danger:#b83232;--r:12px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);display:flex;min-height:100vh;}
 
 /* SIDEBAR */
@@ -20,7 +21,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 .sidebar-logo{font-family:'Playfair Display',serif;font-size:22px;padding:0 20px 24px;border-bottom:0.5px solid rgba(127,196,160,0.1);}
 .sidebar-logo span{color:var(--g3);}
 .sidebar-nav{padding:16px 10px;flex:1;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--g4);cursor:pointer;transition:all .2s;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--g4);cursor:pointer;transition:all .2s;margin-bottom:4px;text-decoration:none;}
 .nav-item:hover,.nav-item.active{background:rgba(74,144,101,0.12);color:var(--white);}
 .nav-item.active{border-left:2.5px solid var(--g3);}
 .nav-item i{font-size:18px;}
@@ -28,6 +29,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 
 /* MAIN */
 .main{margin-left:220px;flex:1;padding:28px;overflow-y:auto;}
+
+/* PAGE SECTIONS */
+.page-section{display:none;}
+.page-section.active{display:block;}
 
 /* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
@@ -54,7 +59,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 .grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:24px;}
 
 /* CARDS */
-.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:20px;}
+.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:20px;margin-bottom:14px;}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .card-title{font-size:14px;font-weight:500;color:var(--white);display:flex;align-items:center;gap:8px;}
 .card-title i{color:var(--g3);font-size:16px;}
@@ -138,6 +143,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 .api-status.loading .api-dot{background:var(--g4);}
 @keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
 
+/* COMING SOON */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center;color:var(--g4);}
+.coming-soon i{font-size:56px;color:var(--g2);margin-bottom:20px;}
+.coming-soon h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;}
+.coming-soon p{font-size:14px;color:var(--g4);max-width:400px;line-height:1.6;}
+
 @media(max-width:900px){
   .sidebar{display:none;}
   .main{margin-left:0;}
@@ -152,13 +163,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 <aside class="sidebar">
   <div class="sidebar-logo">Bina<span>ty</span></div>
   <nav class="sidebar-nav">
-    <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-    <div class="nav-item"><i class="ti ti-building-warehouse"></i> Chantiers</div>
-    <div class="nav-item"><i class="ti ti-file-text"></i> Rapports</div>
-    <div class="nav-item"><i class="ti ti-bell"></i> Alertes</div>
-    <div class="nav-item"><i class="ti ti-users"></i> Équipes</div>
-    <div class="nav-item"><i class="ti ti-chart-bar"></i> Statistiques</div>
-    <div class="nav-item"><i class="ti ti-settings"></i> Paramètres</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('chantiers')"><i class="ti ti-building-warehouse"></i> Chantiers</div>
+    <div class="nav-item" onclick="showPage('rapports')"><i class="ti ti-file-text"></i> Rapports</div>
+    <div class="nav-item" onclick="showPage('alertes')"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item" onclick="showPage('equipes')"><i class="ti ti-users"></i> Équipes</div>
+    <div class="nav-item" onclick="showPage('stats')"><i class="ti ti-chart-bar"></i> Statistiques</div>
+    <div class="nav-item" onclick="showPage('parametres')"><i class="ti ti-settings"></i> Paramètres</div>
   </nav>
   <div class="sidebar-footer">
     <div id="apiStatus" class="api-status loading"><div class="api-dot"></div> Connexion...</div>
@@ -171,117 +182,179 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
   <!-- TOPBAR -->
   <div class="topbar">
     <div>
-      <div class="topbar-title">Tableau de bord</div>
+      <div class="topbar-title" id="pageTitle">Tableau de bord</div>
       <div style="font-size:12px;color:var(--g4);margin-top:2px;" id="lastUpdate">Chargement...</div>
     </div>
-    <div class="topbar-right" style="display:flex;align-items:center;gap:12px;">
+    <div class="topbar-right">
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <i class="ti ti-refresh"></i> Actualiser
       </button>
-      <div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
-      <div class="avatar">T</div><button onclick="localStorage.removeItem('binaty_token');localStorage.removeItem('binaty_user');window.location.href='login.html';" style="background:rgba(184,50,50,0.15);border:0.5px solid rgba(184,50,50,0.3);border-radius:8px;padding:6px 12px;color:#ff8080;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">Déconnexion</button>
+      <div class="notif-btn" onclick="showPage('alertes')"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
+      <div class="avatar" id="userAvatar">T</div>
+      <button onclick="logout()" style="background:rgba(184,50,50,0.15);border:0.5px solid rgba(184,50,50,0.3);border-radius:8px;padding:6px 12px;color:#ff8080;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;">Déconnexion</button>
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-grid">
-    <div class="stat-card" style="--accent:var(--g3)">
-      <div class="stat-icon"><i class="ti ti-building-warehouse"></i></div>
-      <div class="stat-val" id="statChantiers">--</div>
-      <div class="stat-lbl">Chantiers actifs</div>
-      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendChantiers">--</span></div>
+  <!-- ═══ PAGE: DASHBOARD ═══ -->
+  <div id="page-dashboard" class="page-section active">
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--g3)">
+        <div class="stat-icon"><i class="ti ti-building-warehouse"></i></div>
+        <div class="stat-val" id="statChantiers">--</div>
+        <div class="stat-lbl">Chantiers actifs</div>
+        <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendChantiers">--</span></div>
+      </div>
+      <div class="stat-card" style="--accent:var(--g4)">
+        <div class="stat-icon"><i class="ti ti-file-text"></i></div>
+        <div class="stat-val" id="statRapports">--</div>
+        <div class="stat-lbl">Rapports générés</div>
+        <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendRapports">--</span></div>
+      </div>
+      <div class="stat-card" style="--accent:var(--warn)">
+        <div class="stat-icon"><i class="ti ti-bell"></i></div>
+        <div class="stat-val" id="statAlertes">--</div>
+        <div class="stat-lbl">Alertes actives</div>
+        <div class="stat-trend" id="trendAlertes">--</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--g5)">
+        <div class="stat-icon"><i class="ti ti-star"></i></div>
+        <div class="stat-val" id="statScore">--</div>
+        <div class="stat-lbl">Score moyen équipes</div>
+        <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
+      </div>
     </div>
-    <div class="stat-card" style="--accent:var(--g4)">
-      <div class="stat-icon"><i class="ti ti-file-text"></i></div>
-      <div class="stat-val" id="statRapports">--</div>
-      <div class="stat-lbl">Rapports générés</div>
-      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendRapports">--</span></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-building-warehouse"></i> Mes chantiers</div>
+          <span class="card-badge" id="chantiersCount">--</span>
+        </div>
+        <div id="chantiersList">
+          <div class="skeleton skeleton-line w80"></div>
+          <div class="skeleton skeleton-line w60"></div>
+          <div class="skeleton skeleton-line w80"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-star"></i> Score fiabilité</div>
+          </div>
+          <div class="score-wrap">
+            <div class="score-ring">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(127,196,160,0.1)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+                  stroke-linecap="round" stroke-dasharray="314" id="scoreCircle" stroke-dashoffset="314"/>
+                <defs>
+                  <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#2d6b4a"/>
+                    <stop offset="100%" style="stop-color:#7fc4a0"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="score-ring-val">
+                <div class="val" id="scoreVal">--</div>
+                <div class="lbl">/ 10</div>
+              </div>
+            </div>
+            <div class="score-details">
+              <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">Ponctualité</div></div>
+              <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Cohérence</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-bell"></i> Alertes récentes</div>
+            <span class="card-badge" id="alertesCount">--</span>
+          </div>
+          <div id="alertesList">
+            <div class="skeleton skeleton-line w80"></div>
+            <div class="skeleton skeleton-line w60"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-card" style="--accent:var(--warn)">
-      <div class="stat-icon"><i class="ti ti-bell"></i></div>
-      <div class="stat-val" id="statAlertes">--</div>
-      <div class="stat-lbl">Alertes actives</div>
-      <div class="stat-trend" id="trendAlertes">--</div>
-    </div>
-    <div class="stat-card" style="--accent:var(--g5)">
-      <div class="stat-icon"><i class="ti ti-star"></i></div>
-      <div class="stat-val" id="statScore">--</div>
-      <div class="stat-lbl">Score moyen équipes</div>
-      <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
-    </div>
-  </div>
-
-  <!-- GRID 2 COL -->
-  <div class="grid-2">
-
-    <!-- CHANTIERS -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="ti ti-building-warehouse"></i> Mes chantiers</div>
-        <span class="card-badge" id="chantiersCount">--</span>
+        <div class="card-title"><i class="ti ti-file-text"></i> Rapports récents</div>
+        <span class="card-badge" id="rapportsCount">--</span>
       </div>
-      <div id="chantiersList">
+      <div id="rapportsList">
         <div class="skeleton skeleton-line w80"></div>
         <div class="skeleton skeleton-line w60"></div>
         <div class="skeleton skeleton-line w80"></div>
       </div>
     </div>
-
-    <!-- SCORE + ALERTES -->
-    <div>
-      <div class="card" style="margin-bottom:14px;">
-        <div class="card-header">
-          <div class="card-title"><i class="ti ti-star"></i> Score fiabilité</div>
-        </div>
-        <div class="score-wrap">
-          <div class="score-ring">
-            <svg width="120" height="120" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(127,196,160,0.1)" stroke-width="10"/>
-              <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
-                stroke-linecap="round" stroke-dasharray="314" id="scoreCircle" stroke-dashoffset="314"/>
-              <defs>
-                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" style="stop-color:#2d6b4a"/>
-                  <stop offset="100%" style="stop-color:#7fc4a0"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            <div class="score-ring-val">
-              <div class="val" id="scoreVal">--</div>
-              <div class="lbl">/ 10</div>
-            </div>
-          </div>
-          <div class="score-details">
-            <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">Ponctualité</div></div>
-            <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Cohérence</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><i class="ti ti-bell"></i> Alertes récentes</div>
-          <span class="card-badge" id="alertesCount">--</span>
-        </div>
-        <div id="alertesList">
-          <div class="skeleton skeleton-line w80"></div>
-          <div class="skeleton skeleton-line w60"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- RAPPORTS RÉCENTS -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title"><i class="ti ti-file-text"></i> Rapports récents</div>
-      <span class="card-badge" id="rapportsCount">--</span>
+  <!-- ═══ PAGE: CHANTIERS ═══ -->
+  <div id="page-chantiers" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-building-warehouse"></i> Tous les chantiers</div>
+        <span class="card-badge" id="chantiersCount2">--</span>
+      </div>
+      <div id="chantiersListFull">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
     </div>
-    <div id="rapportsList">
-      <div class="skeleton skeleton-line w80"></div>
-      <div class="skeleton skeleton-line w60"></div>
-      <div class="skeleton skeleton-line w80"></div>
+  </div>
+
+  <!-- ═══ PAGE: RAPPORTS ═══ -->
+  <div id="page-rapports" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-file-text"></i> Tous les rapports</div>
+        <span class="card-badge" id="rapportsCount2">--</span>
+      </div>
+      <div id="rapportsListFull">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: ALERTES ═══ -->
+  <div id="page-alertes" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-bell"></i> Toutes les alertes</div>
+        <span class="card-badge" id="alertesCount2">--</span>
+      </div>
+      <div id="alertesListFull">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: EQUIPES ═══ -->
+  <div id="page-equipes" class="page-section">
+    <div class="coming-soon">
+      <i class="ti ti-users"></i>
+      <h2>Équipes</h2>
+      <p>La gestion des équipes et des profils professionnels arrive bientôt. Vous pourrez suivre la performance de chaque membre.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: STATISTIQUES ═══ -->
+  <div id="page-stats" class="page-section">
+    <div class="coming-soon">
+      <i class="ti ti-chart-bar"></i>
+      <h2>Statistiques</h2>
+      <p>Les graphiques d'avancement, tendances et analyses détaillées de vos chantiers arrivent bientôt.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: PARAMÈTRES ═══ -->
+  <div id="page-parametres" class="page-section">
+    <div class="coming-soon">
+      <i class="ti ti-settings"></i>
+      <h2>Paramètres</h2>
+      <p>La configuration de votre compte, notifications et préférences arrive bientôt.</p>
     </div>
   </div>
 
@@ -292,17 +365,50 @@ const API = 'https://buildra.onrender.com';
 const user = JSON.parse(localStorage.getItem('binaty_user') || 'null');
 if(!user) window.location.href = 'login.html';
 
+// ─── NAVIGATION ─────────────────────────────────────────
+const pageTitles = {
+  dashboard: 'Tableau de bord',
+  chantiers: 'Chantiers',
+  rapports: 'Rapports',
+  alertes: 'Alertes',
+  equipes: 'Équipes',
+  stats: 'Statistiques',
+  parametres: 'Paramètres'
+};
+
+function showPage(page) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const section = document.getElementById('page-' + page);
+  if(section) section.classList.add('active');
+
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(n => {
+    if(n.getAttribute('onclick') === "showPage('" + page + "')") n.classList.add('active');
+  });
+
+  document.getElementById('pageTitle').textContent = pageTitles[page] || 'Tableau de bord';
+
+  // Load full data for sub-pages
+  if(page === 'chantiers') loadChantiersFull();
+  if(page === 'rapports') loadRapportsFull();
+  if(page === 'alertes') loadAlertesFull();
+}
+
+// ─── LOGOUT ─────────────────────────────────────────────
 function logout() {
-        localStorage.removeItem("binaty_token");
-        localStorage.removeItem("binaty_user");
-        window.location.href = "login.html";
-      }
-      async function loadData() {
+  localStorage.removeItem("binaty_token");
+  localStorage.removeItem("binaty_user");
+  window.location.href = "login.html";
+}
+
+// ─── LOAD DATA ──────────────────────────────────────────
+async function loadData() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
   setStatus('loading','Connexion...');
 
-  // Wake up Render si endormi
   try { await fetch(API + '/webhook', {method:'GET'}); } catch(e) {}
 
   try {
@@ -317,7 +423,6 @@ function logout() {
     setStatus('ok','API connectée');
     document.getElementById('lastUpdate').textContent = 'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 
-    // STATS
     if(statsRes.status==='fulfilled' && statsRes.value.ok) {
       const stats = await statsRes.value.json();
       animCount('statChantiers', stats.chantiers_actifs || 0);
@@ -329,41 +434,27 @@ function logout() {
         document.getElementById('notifDot').style.display = 'block';
         document.getElementById('trendAlertes').innerHTML = `<span style="color:var(--danger)">${stats.alertes_actives} non traitées</span>`;
       }
-    } else {
-      renderDemoStats();
-    }
+    } else { renderDemoStats(); }
 
-    // CHANTIERS
     if(chantiersRes.status==='fulfilled' && chantiersRes.value.ok) {
       const data = await chantiersRes.value.json();
       renderChantiers(data.chantiers || []);
-    } else {
-      renderDemoChantiers();
-    }
+    } else { renderDemoChantiers(); }
 
-    // RAPPORTS
     if(rapportsRes.status==='fulfilled' && rapportsRes.value.ok) {
       const data = await rapportsRes.value.json();
       renderRapports(data.rapports || []);
-    } else {
-      renderDemoRapports();
-    }
+    } else { renderDemoRapports(); }
 
-    // SCORES
     if(scoresRes.status==='fulfilled' && scoresRes.value.ok) {
       const data = await scoresRes.value.json();
       renderScores(data.scores || []);
-    } else {
-      renderDemoScore();
-    }
+    } else { renderDemoScore(); }
 
-    // ALERTES
     if(alertesRes.status==='fulfilled' && alertesRes.value.ok) {
       const data = await alertesRes.value.json();
       renderAlertes(data.alertes || []);
-    } else {
-      renderDemoAlertes();
-    }
+    } else { renderDemoAlertes(); }
 
   } catch(e) {
     setStatus('err','Hors ligne');
@@ -378,6 +469,98 @@ function logout() {
   btn.classList.remove('loading');
 }
 
+// ─── SUB-PAGE LOADERS ───────────────────────────────────
+async function loadChantiersFull() {
+  try {
+    const res = await fetch(API + '/api/chantiers');
+    if(res.ok) {
+      const data = await res.json();
+      const chantiers = data.chantiers || [];
+      document.getElementById('chantiersCount2').textContent = chantiers.length + ' chantiers';
+      if(!chantiers.length) {
+        document.getElementById('chantiersListFull').innerHTML = '<div class="empty"><i class="ti ti-building-warehouse"></i><p>Aucun chantier actif</p></div>';
+        return;
+      }
+      document.getElementById('chantiersListFull').innerHTML = chantiers.map(c => {
+        const pct = c.avancement_pct || 0;
+        return `<div class="chantier-item">
+          <div class="chantier-avatar">🏗️</div>
+          <div class="chantier-info">
+            <div class="chantier-name">${c.nom || 'Chantier'}</div>
+            <div class="chantier-sub">${c.quartier || ''} • Chef: ${c.chef_whatsapp || '--'}</div>
+          </div>
+          <div class="chantier-right">
+            <div class="progress-bar"><div class="progress-fill-bar" style="width:${pct}%"></div></div>
+            <div class="progress-pct">${pct}%</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('chantiersListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
+  }
+}
+
+async function loadRapportsFull() {
+  try {
+    const res = await fetch(API + '/api/rapports?limit=50');
+    if(res.ok) {
+      const data = await res.json();
+      const rapports = data.rapports || [];
+      document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
+      if(!rapports.length) {
+        document.getElementById('rapportsListFull').innerHTML = '<div class="empty"><i class="ti ti-file-text"></i><p>Aucun rapport disponible</p></div>';
+        return;
+      }
+      document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
+        const isAlerte = r.alerte === 'oui';
+        const isCoh = r.coherence === 'oui';
+        const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
+        const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
+        return `<div class="rapport-item">
+          <div class="rapport-icon ${cls}">${icon}</div>
+          <div class="rapport-content">
+            <div class="rapport-title">${r.chantier_id || 'Chantier'} — ${r.type || 'Rapport'}</div>
+            <div class="rapport-sub">${r.resume_fr || r.declaration || 'Rapport généré automatiquement'}</div>
+          </div>
+          <div class="rapport-time">${r.heure || '--'}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('rapportsListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
+  }
+}
+
+async function loadAlertesFull() {
+  try {
+    const res = await fetch(API + '/api/alertes?limit=50');
+    if(res.ok) {
+      const data = await res.json();
+      const alertes = data.alertes || [];
+      document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
+      if(!alertes.length) {
+        document.getElementById('alertesListFull').innerHTML = '<div class="empty"><i class="ti ti-bell"></i><p>Aucune alerte</p></div>';
+        return;
+      }
+      document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
+        const level = a.niveau || 'low';
+        const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
+        return `<div class="alerte-item ${level}">
+          <div class="alerte-icon">${icon}</div>
+          <div>
+            <div class="alerte-title">${a.type || 'Alerte'}</div>
+            <div class="alerte-sub">${a.message || ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('alertesListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
+  }
+}
+
+// ─── HELPERS ────────────────────────────────────────────
 function setStatus(type, text) {
   const el = document.getElementById('apiStatus');
   el.className = `api-status ${type}`;
@@ -401,8 +584,6 @@ function renderChantiers(chantiers) {
   if(!chantiers.length) { el.innerHTML = '<div class="empty"><i class="ti ti-building-warehouse"></i><p>Aucun chantier actif</p></div>'; return; }
   el.innerHTML = chantiers.map(c => {
     const pct = c.avancement_pct || 0;
-    const badge = pct > 70 ? 'badge-ok' : pct > 30 ? 'badge-warn' : 'badge-danger';
-    const btext = pct > 70 ? 'Avancé' : pct > 30 ? 'En cours' : 'Démarrage';
     return `<div class="chantier-item">
       <div class="chantier-avatar">🏗️</div>
       <div class="chantier-info">
@@ -467,11 +648,10 @@ function renderAlertes(alertes) {
 function updateScore(val) {
   document.getElementById('scoreVal').textContent = val;
   const pct = val / 10;
-  const circumference = 314;
-  document.getElementById('scoreCircle').style.strokeDashoffset = circumference * (1 - pct);
+  document.getElementById('scoreCircle').style.strokeDashoffset = 314 * (1 - pct);
 }
 
-// DEMO DATA (quand l'API n'est pas disponible)
+// ─── DEMO DATA ──────────────────────────────────────────
 function renderDemoStats() {
   animCount('statChantiers', 3);
   animCount('statRapports', 27);
@@ -542,9 +722,9 @@ function renderDemoAlertes() {
     </div>`;
 }
 
-// Init
+// ─── INIT ───────────────────────────────────────────────
 loadData();
-setInterval(loadData, 60000); // Auto refresh toutes les 60s
+setInterval(loadData, 60000);
 </script>
 
 </body>
