@@ -52,6 +52,19 @@ nav {
   transition: background .2s;
 }
 .nav-cta:hover { background: var(--g2); }
+.nav-cta-group { display: flex; align-items: center; gap: 10px; }
+.nav-cta-secondary {
+  background: transparent; color: var(--g5);
+  border: 0.5px solid rgba(127,196,160,0.3);
+}
+.nav-cta-secondary:hover { background: rgba(127,196,160,0.08); color: var(--white); }
+.hamburger-btn {
+  display: none; width: 38px; height: 38px; border-radius: 8px;
+  background: transparent; border: 0.5px solid rgba(127,196,160,0.25);
+  color: var(--g5); font-size: 20px; cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.nav-links-mobile-only { display: none; }
 
 /* ── HERO ── */
 .hero {
@@ -286,7 +299,22 @@ footer p { font-size: 13px; color: var(--g2); }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
+  .nav-links {
+    display: none; flex-direction: column; gap: 4px;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--g0); border-bottom: 0.5px solid rgba(127,196,160,0.15);
+    padding: 12px 5% 18px;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block; padding: 12px 8px; border-radius: 8px;
+    font-size: 15px;
+  }
+  .nav-links a:hover { background: rgba(127,196,160,0.08); }
+  .nav-links-mobile-only { display: block; }
+  .hamburger-btn { display: flex; }
+  .nav-cta-group { display: none; }
   .problem-grid, .features-grid, .pricing-grid { grid-template-columns: 1fr; }
   .alert-demo-inner { grid-template-columns: 1fr; }
   .flux { flex-direction: column; align-items: center; gap: 24px; }
@@ -301,13 +329,21 @@ footer p { font-size: 13px; color: var(--g2); }
 <!-- NAV -->
 <nav>
   <div class="nav-logo">Bina<span>ty</span></div>
-  <ul class="nav-links">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+    <i class="ti ti-menu-2"></i>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#solution">Comment ça marche</a></li>
     <li><a href="#features">Fonctionnalités</a></li>
     <li><a href="#pricing">Tarifs</a></li>
-      <li><a href="dashboard.html">Démo</a></li>
-      <li><a href="inscription.html">Rejoindre</a></li>  </ul>
-  <a href="login.html"><button class="nav-cta">Connexion</button></a>
+    <li><a href="demo.html">Démo</a></li>
+    <li class="nav-links-mobile-only"><a href="login.html">Connexion</a></li>
+    <li class="nav-links-mobile-only"><a href="inscription.html">Commencer</a></li>
+  </ul>
+  <div class="nav-cta-group">
+    <a href="login.html"><button class="nav-cta nav-cta-secondary">Connexion</button></a>
+    <a href="inscription.html"><button class="nav-cta">Commencer</button></a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -576,5 +612,15 @@ footer p { font-size: 13px; color: var(--g2); }
   <p style="font-size:13px;color:var(--g2);">contact@binaty.ma</p>
 </footer>
 
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+document.querySelectorAll('#navLinks a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+</script>
 </body>
 </html>
