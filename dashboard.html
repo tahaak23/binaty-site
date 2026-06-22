@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
 :root{
   --g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--g5:#b8d9c5;
@@ -255,6 +257,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
         <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
       </div>
     </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-chart-line"></i> Évolution de l'avancement par chantier</div>
+        <span style="font-size:11px;color:var(--g4);">Estimation basée sur l'analyse photo IA</span>
+      </div>
+      <div style="position:relative;height:260px;">
+        <canvas id="progressChart"></canvas>
+      </div>
+      <div id="progressChartEmpty" style="display:none;text-align:center;padding:40px 0;color:var(--g4);font-size:13px;">
+        <i class="ti ti-photo" style="font-size:28px;display:block;margin-bottom:8px;"></i>
+        Pas encore assez de rapports photo pour tracer une évolution.
+      </div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
         <div class="card-header">
@@ -480,12 +497,13 @@ async function loadData() {
   try { await fetch(API + '/webhook', {method:'GET'}); } catch(e) {}
 
   try {
-    const [statsRes, chantiersRes, rapportsRes, scoresRes, alertesRes] = await Promise.allSettled([
+    const [statsRes, chantiersRes, rapportsRes, scoresRes, alertesRes, progressionRes] = await Promise.allSettled([
       fetch(API + '/api/stats'),
       fetch(API + '/api/chantiers'),
       fetch(API + '/api/rapports?limit=5'),
       fetch(API + '/api/scores'),
       fetch(API + '/api/alertes?limit=4'),
+      fetch(API + '/api/progression'),
     ]);
 
     setStatus('ok','API connectée');
@@ -524,6 +542,11 @@ async function loadData() {
       renderAlertes(data.alertes || []);
     } else { renderDemoAlertes(); }
 
+    if(progressionRes.status==='fulfilled' && progressionRes.value.ok) {
+      const data = await progressionRes.value.json();
+      renderProgressionChart(data.progression || {});
+    } else { renderDemoProgressionChart(); }
+
   } catch(e) {
     setStatus('err','Hors ligne');
     renderDemoStats();
@@ -531,6 +554,7 @@ async function loadData() {
     renderDemoRapports();
     renderDemoScore();
     renderDemoAlertes();
+    renderDemoProgressionChart();
     document.getElementById('lastUpdate').textContent = 'Mode démo — données exemple';
   }
 
@@ -788,6 +812,100 @@ function renderDemoAlertes() {
         <div class="alerte-sub">Aucun rapport reçu depuis 18h hier</div>
       </div>
     </div>`;
+}
+
+// ─── GRAPHE D'AVANCEMENT ────────────────────────────────
+let progressChartInstance = null;
+const PROGRESS_COLORS = ['#4a9065', '#7fc4a0', '#c47a00', '#b83232', '#2d6b4a'];
+
+function buildProgressChart(datasets) {
+  const canvas = document.getElementById('progressChart');
+  const emptyState = document.getElementById('progressChartEmpty');
+
+  if (!datasets.length) {
+    canvas.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+  canvas.style.display = 'block';
+  emptyState.style.display = 'none';
+
+  if (progressChartInstance) {
+    progressChartInstance.destroy();
+  }
+
+  progressChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'nearest', intersect: false },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#b8d9c5', font: { family: 'DM Sans', size: 12 } }
+        },
+        tooltip: {
+          callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%` }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy' },
+          ticks: { color: '#7fc4a0', font: { family: 'DM Sans', size: 11 } },
+          grid: { color: 'rgba(127,196,160,0.08)' }
+        },
+        y: {
+          min: 0, max: 100,
+          ticks: { color: '#7fc4a0', font: { family: 'DM Sans', size: 11 }, callback: (v) => v + '%' },
+          grid: { color: 'rgba(127,196,160,0.08)' }
+        }
+      }
+    }
+  });
+}
+
+function renderProgressionChart(progressionParChantier) {
+  const chantierIds = Object.keys(progressionParChantier);
+  const datasets = chantierIds.map((id, i) => {
+    const points = progressionParChantier[id].map(p => ({ x: p.date, y: p.pct }));
+    const color = PROGRESS_COLORS[i % PROGRESS_COLORS.length];
+    return {
+      label: id,
+      data: points,
+      borderColor: color,
+      backgroundColor: color + '22',
+      tension: 0.3,
+      fill: false,
+      pointRadius: 3,
+    };
+  }).filter(ds => ds.data.length > 0);
+
+  buildProgressChart(datasets);
+}
+
+function renderDemoProgressionChart() {
+  const today = new Date();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const fmt = (offset) => new Date(today - offset * dayMs).toISOString().slice(0, 10);
+
+  const datasets = [
+    {
+      label: 'Résidence Al Manar',
+      data: [fmt(20), fmt(14), fmt(7), fmt(2)].map((d, i) => ({ x: d, y: [35, 48, 60, 68][i] })),
+      borderColor: PROGRESS_COLORS[0], backgroundColor: PROGRESS_COLORS[0] + '22',
+      tension: 0.3, fill: false, pointRadius: 3,
+    },
+    {
+      label: 'Immeuble Andalous',
+      data: [fmt(18), fmt(12), fmt(6), fmt(1)].map((d, i) => ({ x: d, y: [20, 28, 35, 42][i] })),
+      borderColor: PROGRESS_COLORS[1], backgroundColor: PROGRESS_COLORS[1] + '22',
+      tension: 0.3, fill: false, pointRadius: 3,
+    },
+  ];
+  buildProgressChart(datasets);
 }
 
 // ─── INIT ───────────────────────────────────────────────
