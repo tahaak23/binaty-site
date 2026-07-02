@@ -52,6 +52,19 @@ nav {
   transition: background .2s;
 }
 .nav-cta:hover { background: var(--g2); }
+.nav-cta-group { display: flex; align-items: center; gap: 10px; }
+.nav-cta-secondary {
+  background: transparent; color: var(--g5);
+  border: 0.5px solid rgba(127,196,160,0.3);
+}
+.nav-cta-secondary:hover { background: rgba(127,196,160,0.08); color: var(--white); }
+.hamburger-btn {
+  display: none; width: 38px; height: 38px; border-radius: 8px;
+  background: transparent; border: 0.5px solid rgba(127,196,160,0.25);
+  color: var(--g5); font-size: 20px; cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.nav-links-mobile-only { display: none; }
 
 /* ── HERO ── */
 .hero {
@@ -286,7 +299,22 @@ footer p { font-size: 13px; color: var(--g2); }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
+  .nav-links {
+    display: none; flex-direction: column; gap: 4px;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--g0); border-bottom: 0.5px solid rgba(127,196,160,0.15);
+    padding: 12px 5% 18px;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block; padding: 12px 8px; border-radius: 8px;
+    font-size: 15px;
+  }
+  .nav-links a:hover { background: rgba(127,196,160,0.08); }
+  .nav-links-mobile-only { display: block; }
+  .hamburger-btn { display: flex; }
+  .nav-cta-group { display: none; }
   .problem-grid, .features-grid, .pricing-grid { grid-template-columns: 1fr; }
   .alert-demo-inner { grid-template-columns: 1fr; }
   .flux { flex-direction: column; align-items: center; gap: 24px; }
@@ -301,13 +329,21 @@ footer p { font-size: 13px; color: var(--g2); }
 <!-- NAV -->
 <nav>
   <div class="nav-logo">Bina<span>ty</span></div>
-  <ul class="nav-links">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+    <i class="ti ti-menu-2"></i>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#solution">Comment ça marche</a></li>
     <li><a href="#features">Fonctionnalités</a></li>
     <li><a href="#pricing">Tarifs</a></li>
-      <li><a href="dashboard.html">Démo</a></li>
-      <li><a href="inscription.html">Rejoindre</a></li>  </ul>
-  <a href="login.html"><button class="nav-cta">Connexion</button></a>
+    <li><a href="demo.html">Démo</a></li>
+    <li class="nav-links-mobile-only"><a href="login.html">Connexion</a></li>
+    <li class="nav-links-mobile-only"><a href="inscription.html">Commencer</a></li>
+  </ul>
+  <div class="nav-cta-group">
+    <a href="login.html"><button class="nav-cta nav-cta-secondary">Connexion</button></a>
+    <a href="inscription.html"><button class="nav-cta">Commencer</button></a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -320,9 +356,10 @@ footer p { font-size: 13px; color: var(--g2); }
   <h1>Votre chantier,<br>sous <em>contrôle total</em>.</h1>
   <p class="hero-sub">Binaty relie les promoteurs immobiliers à leurs chantiers en temps réel. Photos vérifiées, vocaux analysés, alertes instantanées — sans se déplacer.</p>
   <div class="hero-actions">
-    <button class="btn-primary"><i class="ti ti-brand-whatsapp"></i> Démarrer gratuitement</button>
-    <button class="btn-ghost">Voir une démo →</button>
+    <a href="inscription.html"><button class="btn-primary"><i class="ti ti-brand-whatsapp"></i> Démarrer gratuitement</button></a>
+    <a href="demo.html"><button class="btn-ghost">Voir une démo →</button></a>
   </div>
+  <div style="font-size:13px;color:var(--g4);margin-top:14px;">3 jours d'essai gratuit · Sans engagement</div>
   <div class="stats-bar" style="margin-top:56px;border-radius:14px;width:100%;max-width:600px;">
     <div class="stat-item">
       <div class="stat-num">100%</div>
@@ -519,6 +556,9 @@ footer p { font-size: 13px; color: var(--g2); }
         <div class="price-name">Starter</div>
         <div class="price-amount">500 <span>MAD/mois</span></div>
         <div class="price-desc">Pour 1 chantier actif</div>
+        <div style="font-size:12px;color:var(--g3);margin:-14px 0 16px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-clock"></i> 3 jours d'essai gratuit
+        </div>
         <ul class="price-features">
           <li>1 chantier</li>
           <li>WhatsApp Bot</li>
@@ -526,12 +566,15 @@ footer p { font-size: 13px; color: var(--g2); }
           <li>Rapports journaliers</li>
           <li>Alertes WhatsApp</li>
         </ul>
-        <button class="btn-ghost price-btn" style="padding:12px;">Commencer</button>
+        <a href="inscription.html"><button class="btn-ghost price-btn" style="padding:12px;width:100%;">Commencer</button></a>
       </div>
       <div class="price-card featured">
         <div class="price-name">Pro</div>
         <div class="price-amount">1200 <span>MAD/mois</span></div>
         <div class="price-desc">Pour 3 chantiers actifs</div>
+        <div style="font-size:12px;color:var(--g3);margin:-14px 0 16px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-clock"></i> 3 jours d'essai gratuit
+        </div>
         <ul class="price-features">
           <li>3 chantiers</li>
           <li>Tout Starter inclus</li>
@@ -540,7 +583,7 @@ footer p { font-size: 13px; color: var(--g2); }
           <li>Profils professionnels</li>
           <li>Support prioritaire</li>
         </ul>
-        <button class="btn-primary price-btn" style="justify-content:center;">Commencer →</button>
+        <a href="inscription.html"><button class="btn-primary price-btn" style="justify-content:center;width:100%;">Commencer →</button></a>
       </div>
       <div class="price-card">
         <div class="price-name">Entreprise</div>
@@ -554,7 +597,7 @@ footer p { font-size: 13px; color: var(--g2); }
           <li>Account manager dédié</li>
           <li>Formation équipe</li>
         </ul>
-        <button class="btn-ghost price-btn" style="padding:12px;">Nous contacter</button>
+        <a href="https://wa.me/212771868430?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20l'offre%20Entreprise%20Binaty" target="_blank"><button class="btn-ghost price-btn" style="padding:12px;width:100%;">Nous contacter</button></a>
       </div>
     </div>
   </div>
@@ -564,9 +607,9 @@ footer p { font-size: 13px; color: var(--g2); }
 <section class="cta-final">
   <h2>Prêt à voir votre<br>chantier en <em style="color:var(--g3);">temps réel</em> ?</h2>
   <p>Rejoignez les premiers promoteurs de Tanger qui contrôlent leurs chantiers depuis leur téléphone.</p>
-  <button class="btn-primary" style="margin:0 auto;font-size:16px;padding:18px 40px;">
+  <a href="demo.html"><button class="btn-primary" style="margin:0 auto;font-size:16px;padding:18px 40px;">
     <i class="ti ti-brand-whatsapp"></i> Demander une démo gratuite
-  </button>
+  </button></a>
 </section>
 
 <!-- FOOTER -->
@@ -576,5 +619,15 @@ footer p { font-size: 13px; color: var(--g2); }
   <p style="font-size:13px;color:var(--g2);">contact@binaty.ma</p>
 </footer>
 
+<script>
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+document.querySelectorAll('#navLinks a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+</script>
 </body>
 </html>

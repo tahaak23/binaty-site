@@ -3,478 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Binaty — Rejoindre en tant que professionnel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<title>Binaty — Créer un compte promoteur</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--g5:#b8d9c5;
-  --white:#f9fdf9;--warn:#c47a00;--danger:#b83232;--radius:14px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);min-height:100vh;}
-
-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 5%;background:rgba(10,26,16,0.9);backdrop-filter:blur(12px);border-bottom:0.5px solid rgba(127,196,160,0.1);position:sticky;top:0;z-index:100;}
-.nav-logo{font-family:'Playfair Display',serif;font-size:22px;}
-.nav-logo span{color:var(--g3);}
-.nav-link{font-size:14px;color:var(--g4);text-decoration:none;}
-
-.hero{padding:50px 5% 30px;text-align:center;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(74,144,101,0.15);border:0.5px solid rgba(74,144,101,0.4);padding:7px 16px;border-radius:20px;font-size:12px;color:var(--g4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;}
-.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--g3);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,44px);font-weight:700;line-height:1.15;letter-spacing:-1px;margin-bottom:12px;}
-.hero h1 em{font-style:normal;color:var(--g3);}
-.hero p{font-size:15px;color:var(--g5);max-width:480px;margin:0 auto 28px;line-height:1.6;}
-
-.form-container{max-width:680px;margin:0 auto;padding:0 5% 60px;}
-
-.steps-bar{display:flex;gap:0;margin-bottom:28px;background:rgba(26,58,42,0.3);border-radius:12px;padding:4px;}
-.step-btn{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;color:var(--g4);border:none;background:none;font-family:'DM Sans',sans-serif;cursor:default;}
-.step-btn.active{background:var(--g1);color:var(--white);border:0.5px solid rgba(127,196,160,0.15);}
-.step-btn.done{color:var(--g3);}
-
-.progress-wrap{margin-bottom:24px;}
-.progress-track{height:3px;background:rgba(127,196,160,0.1);border-radius:2px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:2px;transition:width .5s ease;}
-
-.step-panel{display:none;animation:fadeUp .4s ease both;}
-.step-panel.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-
-.form-card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);border-radius:var(--radius);padding:22px;margin-bottom:14px;}
-.form-card-title{font-size:14px;font-weight:500;color:var(--g3);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-
-.form-group{margin-bottom:14px;}
-.form-label{font-size:12px;color:var(--g4);margin-bottom:7px;display:block;font-weight:500;}
-.input-wrap{position:relative;}
-.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--g2);font-size:18px;pointer-events:none;}
-.form-input{width:100%;background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.2);border-radius:12px;padding:13px 16px 13px 44px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;}
-.form-input:focus{border-color:var(--g3);}
-.form-input::placeholder{color:rgba(127,196,160,0.3);}
-.form-input.no-icon{padding-left:16px;}
-.form-select{width:100%;background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.2);border-radius:12px;padding:13px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a9065' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
-.form-select option{background:var(--g1);}
+:root{--g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--g5:#b8d9c5;--white:#f9fdf9;--danger:#b83232;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 0;}
+.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);border-radius:16px;padding:40px;width:100%;max-width:440px;margin:20px;}
+.logo{font-family:'Playfair Display',serif;font-size:28px;text-align:center;margin-bottom:8px;}
+.logo span{color:var(--g3);}
+.subtitle{text-align:center;color:var(--g4);font-size:14px;margin-bottom:28px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-textarea{width:100%;background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.2);border-radius:12px;padding:13px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:90px;}
-.form-textarea::placeholder{color:rgba(127,196,160,0.3);}
-
-/* TYPE SELECTION */
-.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;}
-.type-card{background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.15);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .3s;position:relative;}
-.type-card:hover{border-color:rgba(127,196,160,0.4);transform:translateY(-2px);}
-.type-card.selected{background:rgba(74,144,101,0.15);border-color:var(--g3);border-width:1.5px;}
-.type-card.selected .type-check{display:flex;}
-.type-check{display:none;position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--g3);align-items:center;justify-content:center;font-size:11px;color:#fff;}
-.type-icon{font-size:36px;margin-bottom:12px;}
-.type-name{font-size:15px;font-weight:500;color:var(--white);margin-bottom:4px;}
-.type-desc{font-size:12px;color:var(--g4);line-height:1.4;}
-
-/* SPECIALITES */
-.spec-section{margin-bottom:16px;}
-.spec-section-title{font-size:11px;color:var(--g3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:500;}
-.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.spec-card{background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.15);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
-.spec-card:hover{border-color:rgba(127,196,160,0.4);}
-.spec-card.selected{background:rgba(74,144,101,0.15);border-color:var(--g3);}
-.spec-card.selected .spec-check{display:flex;}
-.spec-check{display:none;position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--g3);align-items:center;justify-content:center;font-size:9px;color:#fff;}
-.spec-icon{font-size:20px;margin-bottom:6px;}
-.spec-name{font-size:11px;color:var(--white);font-weight:500;}
-
-/* EXPERIENCE */
-.exp-item{background:rgba(10,26,16,0.5);border:0.5px solid rgba(127,196,160,0.1);border-radius:10px;padding:14px;margin-bottom:10px;position:relative;}
-.exp-remove{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--danger);cursor:pointer;font-size:18px;}
-.add-exp-btn{width:100%;background:transparent;border:0.5px dashed rgba(127,196,160,0.3);border-radius:10px;padding:12px;color:var(--g3);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
-.add-exp-btn:hover{border-color:var(--g3);}
-
-/* DISPO */
-.dispo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.dispo-card{background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.15);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
-.dispo-card:hover{border-color:rgba(127,196,160,0.4);}
-.dispo-card.selected{background:rgba(74,144,101,0.15);border-color:var(--g3);}
-.dispo-icon{font-size:18px;}
-.dispo-text{font-size:13px;color:var(--white);}
-.dispo-sub{font-size:11px;color:var(--g4);margin-top:1px;}
-
-/* SUCCESS */
-.success-wrap{text-align:center;padding:32px 16px;}
-.success-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;animation:pop .5s cubic-bezier(.175,.885,.32,1.275) both;}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.success-feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;text-align:left;}
-.success-feat{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:12px;padding:12px;display:flex;gap:10px;}
-.success-feat i{color:var(--g3);font-size:18px;flex-shrink:0;}
-.sf-title{font-size:12px;font-weight:500;margin-bottom:2px;}
-.sf-desc{font-size:11px;color:var(--g5);}
-
-/* BUTTONS */
-.btn-primary{width:100%;background:var(--g3);color:#fff;border:none;padding:15px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-top:8px;}
-.btn-primary:hover{background:var(--g2);}
-.btn-ghost{width:100%;background:transparent;color:var(--g4);border:0.5px solid rgba(127,196,160,0.2);padding:13px;border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;margin-top:8px;}
-.btn-ghost:hover{border-color:var(--g4);color:var(--white);}
-.btn-back{background:none;border:none;color:var(--g4);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:18px;font-family:'DM Sans',sans-serif;padding:0;}
-.btn-back:hover{color:var(--white);}
-
-footer{text-align:center;padding:20px;border-top:0.5px solid rgba(127,196,160,0.08);}
-footer p{font-size:12px;color:var(--g2);}
-
-@media(max-width:580px){
-  .form-row,.type-grid,.dispo-grid,.success-feats{grid-template-columns:1fr;}
-  .spec-grid{grid-template-columns:repeat(2,1fr);}
-}
+.form-group{margin-bottom:14px;}
+label{display:block;font-size:12px;color:var(--g4);margin-bottom:6px;}
+input,select{width:100%;background:rgba(10,26,16,0.6);border:0.5px solid rgba(127,196,160,0.2);border-radius:10px;padding:12px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+input:focus,select:focus{border-color:var(--g3);}
+select option{background:var(--g1);}
+.btn{width:100%;background:linear-gradient(135deg,var(--g2),var(--g3));border:none;border-radius:10px;padding:14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;cursor:pointer;margin-top:8px;}
+.btn:disabled{opacity:0.6;cursor:default;}
+.error{background:rgba(184,50,50,0.15);border:0.5px solid rgba(184,50,50,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff8080;margin-bottom:16px;display:none;}
+.success-box{background:rgba(74,144,101,0.15);border:0.5px solid rgba(74,144,101,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--g4);margin-bottom:16px;display:none;}
+.links-row{text-align:center;margin-top:18px;font-size:13px;color:var(--g4);}
+.links-row a{color:var(--g3);text-decoration:none;}
+.back{text-align:center;margin-top:10px;font-size:13px;color:var(--g4);}
+.back a{color:var(--g3);text-decoration:none;}
+.hint{font-size:11px;color:var(--g4);margin-top:4px;}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+<div class="card">
+  <div class="logo">Bina<span>ty</span></div>
+  <div class="subtitle">Créer votre compte promoteur</div>
+  <div class="error" id="errorMsg"></div>
+  <div class="success-box" id="successMsg"></div>
 
-<nav>
-  <div class="nav-logo">Bina<span>ty</span></div>
-  <a href="https://tahaak23.github.io/binaty-site" class="nav-link">← Retour</a>
-</nav>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Prénom</label>
+      <input type="text" id="prenom" placeholder="Mohammed">
+    </div>
+    <div class="form-group">
+      <label>Nom</label>
+      <input type="text" id="nom" placeholder="Karimi">
+    </div>
+  </div>
 
-<div class="hero">
-  <div class="hero-badge">Rejoindre Binaty</div>
-  <h1>Construisez votre<br>réputation sur <em>Binaty</em></h1>
-  <p>Créez votre profil professionnel, accumulez un score vérifié et trouvez de nouveaux clients au Maroc.</p>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="vous@exemple.com">
+  </div>
+
+  <div class="form-group">
+    <label>Numéro WhatsApp</label>
+    <input type="tel" id="whatsapp" placeholder="+212 6XX XXX XXX">
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Ville</label>
+      <select id="ville">
+        <option>Tanger</option>
+        <option>Casablanca</option>
+        <option>Rabat</option>
+        <option>Marrakech</option>
+        <option>Agadir</option>
+        <option>Fès</option>
+        <option>Tétouan</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Société (optionnel)</label>
+      <input type="text" id="societe" placeholder="Votre société">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Mot de passe</label>
+    <input type="password" id="password" placeholder="••••••••">
+    <div class="hint">8 caractères minimum</div>
+  </div>
+
+  <div class="form-group">
+    <label>Confirmer le mot de passe</label>
+    <input type="password" id="passwordConfirm" placeholder="••••••••">
+  </div>
+
+  <button class="btn" id="submitBtn" onclick="inscrire()">Créer mon compte</button>
+
+  <div class="links-row">Déjà un compte ? <a href="login.html">Se connecter</a></div>
+  <div class="back"><a href="index.html">← Retour à l'accueil</a></div>
 </div>
-
-<div class="form-container">
-
-  <div class="steps-bar">
-    <button class="step-btn active" id="stepBtn0">Type</button>
-    <button class="step-btn" id="stepBtn1">Profil</button>
-    <button class="step-btn" id="stepBtn2">Spécialité</button>
-    <button class="step-btn" id="stepBtn3">Expériences</button>
-    <button class="step-btn" id="stepBtn4">Disponibilité</button>
-  </div>
-
-  <div class="progress-wrap">
-    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
-  </div>
-
-  <!-- STEP 0 — TYPE -->
-  <div class="step-panel active" id="panel0">
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-user-check"></i> Vous êtes ?</div>
-      <div class="type-grid">
-        <div class="type-card" onclick="selectType(this,'btp')">
-          <div class="type-check">✓</div>
-          <div class="type-icon">👷</div>
-          <div class="type-name">Professionnel BTP</div>
-          <div class="type-desc">Chef chantier, électricien, plombier, maçon, peintre...</div>
-        </div>
-        <div class="type-card" onclick="selectType(this,'immo')">
-          <div class="type-check">✓</div>
-          <div class="type-icon">🏗️</div>
-          <div class="type-name">Professionnel Immobilier</div>
-          <div class="type-desc">Architecte, bureau d'études, géomètre, maître d'œuvre...</div>
-        </div>
-      </div>
-    </div>
-    <button class="btn-primary" onclick="nextStep()">Continuer <i class="ti ti-arrow-right"></i></button>
-  </div>
-
-  <!-- STEP 1 — PROFIL -->
-  <div class="step-panel" id="panel1">
-    <button class="btn-back" onclick="prevStep()"><i class="ti ti-arrow-left"></i> Retour</button>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-user"></i> Vos informations</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Prénom</label>
-          <div class="input-wrap">
-            <i class="ti ti-user input-icon"></i>
-            <input class="form-input" type="text" placeholder="Mohammed">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nom</label>
-          <div class="input-wrap">
-            <i class="ti ti-user input-icon"></i>
-            <input class="form-input" type="text" placeholder="Karimi">
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Numéro WhatsApp</label>
-        <div class="input-wrap">
-          <i class="ti ti-brand-whatsapp input-icon"></i>
-          <input class="form-input" type="tel" placeholder="+212 6XX XXX XXX">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Ville principale</label>
-          <select class="form-select">
-            <option>Tanger</option>
-            <option>Casablanca</option>
-            <option>Rabat</option>
-            <option>Marrakech</option>
-            <option>Agadir</option>
-            <option>Fès</option>
-            <option>Tétouan</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Années d'expérience</label>
-          <select class="form-select">
-            <option>Moins de 2 ans</option>
-            <option>2 à 5 ans</option>
-            <option>5 à 10 ans</option>
-            <option>10 à 20 ans</option>
-            <option>Plus de 20 ans</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Zone de travail</label>
-        <div class="input-wrap">
-          <i class="ti ti-map-pin input-icon"></i>
-          <input class="form-input" type="text" placeholder="Ex: Tanger, Tétouan, Asilah">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Description courte</label>
-        <textarea class="form-textarea" placeholder="Décrivez votre expertise en quelques lignes..."></textarea>
-      </div>
-    </div>
-    <button class="btn-primary" onclick="nextStep()">Continuer <i class="ti ti-arrow-right"></i></button>
-  </div>
-
-  <!-- STEP 2 — SPÉCIALITÉ -->
-  <div class="step-panel" id="panel2">
-    <button class="btn-back" onclick="prevStep()"><i class="ti ti-arrow-left"></i> Retour</button>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-tools"></i> Votre spécialité</div>
-
-      <!-- BTP -->
-      <div id="specBTP">
-        <div class="spec-section">
-          <div class="spec-section-title">🔨 Gros œuvre & Structure</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Chef de chantier')"><div class="spec-check">✓</div><div class="spec-icon">👷</div><div class="spec-name">Chef chantier</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Maçon')"><div class="spec-check">✓</div><div class="spec-icon">🧱</div><div class="spec-name">Maçon</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Ferrailleur')"><div class="spec-check">✓</div><div class="spec-icon">🔩</div><div class="spec-name">Ferrailleur</div></div>
-          </div>
-        </div>
-        <div class="spec-section">
-          <div class="spec-section-title">⚡ Technique & Équipements</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Électricien')"><div class="spec-check">✓</div><div class="spec-icon">⚡</div><div class="spec-name">Électricien</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Plombier')"><div class="spec-check">✓</div><div class="spec-icon">🔧</div><div class="spec-name">Plombier</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Climatisation')"><div class="spec-check">✓</div><div class="spec-icon">❄️</div><div class="spec-name">Climatisation</div></div>
-          </div>
-        </div>
-        <div class="spec-section">
-          <div class="spec-section-title">🎨 Finition & Décoration</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Carreleur')"><div class="spec-check">✓</div><div class="spec-icon">🏠</div><div class="spec-name">Carreleur</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Peintre')"><div class="spec-check">✓</div><div class="spec-icon">🎨</div><div class="spec-name">Peintre</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Menuisier')"><div class="spec-check">✓</div><div class="spec-icon">🪚</div><div class="spec-name">Menuisier</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- IMMOBILIER -->
-      <div id="specIMMO" style="display:none;">
-        <div class="spec-section">
-          <div class="spec-section-title">📐 Conception & Design</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Architecte')"><div class="spec-check">✓</div><div class="spec-icon">📐</div><div class="spec-name">Architecte</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Architecte d\'intérieur')"><div class="spec-check">✓</div><div class="spec-icon">🛋️</div><div class="spec-name">Arch. intérieur</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Paysagiste')"><div class="spec-check">✓</div><div class="spec-icon">🌿</div><div class="spec-name">Paysagiste</div></div>
-          </div>
-        </div>
-        <div class="spec-section">
-          <div class="spec-section-title">📊 Études & Contrôle</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Bureau d\'études')"><div class="spec-check">✓</div><div class="spec-icon">📊</div><div class="spec-name">Bureau d'études</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Géomètre')"><div class="spec-check">✓</div><div class="spec-icon">📏</div><div class="spec-name">Géomètre</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Contrôleur technique')"><div class="spec-check">✓</div><div class="spec-icon">🔍</div><div class="spec-name">Contrôleur</div></div>
-          </div>
-        </div>
-        <div class="spec-section">
-          <div class="spec-section-title">🏗️ Gestion & Promotion</div>
-          <div class="spec-grid">
-            <div class="spec-card" onclick="selectSpec(this,'Maître d\'œuvre')"><div class="spec-check">✓</div><div class="spec-icon">📋</div><div class="spec-name">Maître d'œuvre</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Promoteur immobilier')"><div class="spec-check">✓</div><div class="spec-icon">🏗️</div><div class="spec-name">Promoteur</div></div>
-            <div class="spec-card" onclick="selectSpec(this,'Gestionnaire de projet')"><div class="spec-check">✓</div><div class="spec-icon">📁</div><div class="spec-name">Chef de projet</div></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <button class="btn-primary" onclick="nextStep()">Continuer <i class="ti ti-arrow-right"></i></button>
-  </div>
-
-  <!-- STEP 3 — EXPÉRIENCES -->
-  <div class="step-panel" id="panel3">
-    <button class="btn-back" onclick="prevStep()"><i class="ti ti-arrow-left"></i> Retour</button>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-briefcase"></i> Vos expériences</div>
-      <div id="expContainer">
-        <div class="exp-item" id="exp0">
-          <div class="form-group">
-            <label class="form-label">Nom du projet</label>
-            <input class="form-input no-icon" type="text" placeholder="Ex: Résidence Al Majd — Tanger">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Ville</label>
-              <input class="form-input no-icon" type="text" placeholder="Tanger">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Année</label>
-              <input class="form-input no-icon" type="text" placeholder="2024">
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Description</label>
-            <textarea class="form-textarea" placeholder="Votre rôle sur ce projet..." style="min-height:70px;"></textarea>
-          </div>
-        </div>
-      </div>
-      <button class="add-exp-btn" onclick="addExp()" style="margin-top:10px;">
-        <i class="ti ti-plus"></i> Ajouter un projet
-      </button>
-    </div>
-    <button class="btn-primary" onclick="nextStep()">Continuer <i class="ti ti-arrow-right"></i></button>
-    <button class="btn-ghost" onclick="nextStep()">Passer cette étape</button>
-  </div>
-
-  <!-- STEP 4 — DISPONIBILITÉ -->
-  <div class="step-panel" id="panel4">
-    <button class="btn-back" onclick="prevStep()"><i class="ti ti-arrow-left"></i> Retour</button>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-calendar"></i> Disponibilité</div>
-      <div class="dispo-grid">
-        <div class="dispo-card selected" onclick="selectDispo(this)">
-          <div class="dispo-icon">✅</div>
-          <div><div class="dispo-text">Disponible maintenant</div><div class="dispo-sub">Prêt pour de nouveaux projets</div></div>
-        </div>
-        <div class="dispo-card" onclick="selectDispo(this)">
-          <div class="dispo-icon">⏳</div>
-          <div><div class="dispo-text">Disponible bientôt</div><div class="dispo-sub">Dans 2 à 4 semaines</div></div>
-        </div>
-        <div class="dispo-card" onclick="selectDispo(this)">
-          <div class="dispo-icon">🔄</div>
-          <div><div class="dispo-text">Occupé actuellement</div><div class="dispo-sub">Projet en cours</div></div>
-        </div>
-        <div class="dispo-card" onclick="selectDispo(this)">
-          <div class="dispo-icon">📅</div>
-          <div><div class="dispo-text">Week-end uniquement</div><div class="dispo-sub">Disponible les weekends</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ti ti-coin"></i> Tarif (optionnel)</div>
-      <div class="input-wrap">
-        <i class="ti ti-coin input-icon"></i>
-        <input class="form-input" type="number" placeholder="Ex: 300 MAD/jour">
-      </div>
-    </div>
-    <button class="btn-primary" onclick="submitForm()">
-      <i class="ti ti-rocket"></i> Créer mon profil Binaty
-    </button>
-  </div>
-
-  <!-- SUCCESS -->
-  <div class="step-panel" id="panelSuccess">
-    <div class="success-wrap">
-      <div class="success-icon">✅</div>
-      <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:10px;">Bienvenue sur Binaty !</div>
-      <div style="font-size:15px;color:var(--g5);line-height:1.6;margin-bottom:24px;">Votre profil est créé. Vous allez recevoir un message de confirmation sur WhatsApp dans quelques instants.</div>
-      <div class="success-feats">
-        <div class="success-feat"><i class="ti ti-star"></i><div><div class="sf-title">Score Binaty</div><div class="sf-desc">Votre score monte dès votre premier projet</div></div></div>
-        <div class="success-feat"><i class="ti ti-users"></i><div><div class="sf-title">Visible aux clients</div><div class="sf-desc">300+ promoteurs peuvent vous trouver</div></div></div>
-        <div class="success-feat"><i class="ti ti-brand-whatsapp"></i><div><div class="sf-title">WhatsApp connecté</div><div class="sf-desc">Envoyez vos rapports via WhatsApp</div></div></div>
-        <div class="success-feat"><i class="ti ti-shield-check"></i><div><div class="sf-title">Profil vérifié</div><div class="sf-desc">Badge Binaty après votre premier projet</div></div></div>
-      </div>
-      <button class="btn-primary" onclick="window.location.href='https://tahaak23.github.io/binaty-site'">
-        <i class="ti ti-home"></i> Retour à Binaty
-      </button>
-    </div>
-  </div>
-
-</div>
-
-<footer><p>Binaty — tahaak23.github.io/binaty-site | contact@binaty.ma</p></footer>
 
 <script>
-let currentStep = 0;
-let selectedType = '';
-let expCount = 1;
-const totalSteps = 5;
+const API = 'https://buildra.onrender.com';
+if(localStorage.getItem('binaty_user')) window.location.href = 'dashboard.html';
+document.addEventListener('keydown', e => { if(e.key==='Enter') inscrire(); });
 
-function updateUI() {
-  document.querySelectorAll('.step-panel').forEach((p,i) => p.classList.toggle('active', i === currentStep));
-  document.querySelectorAll('.step-btn').forEach((b,i) => {
-    b.classList.remove('active','done');
-    if(i === currentStep) b.classList.add('active');
-    else if(i < currentStep) b.classList.add('done');
-  });
-  document.getElementById('progressFill').style.width = ((currentStep+1)/totalSteps*100)+'%';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+async function inscrire() {
+  const btn = document.getElementById('submitBtn');
+  const prenom = document.getElementById('prenom').value.trim();
+  const nom = document.getElementById('nom').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const whatsapp = document.getElementById('whatsapp').value.trim();
+  const ville = document.getElementById('ville').value;
+  const societe = document.getElementById('societe').value.trim();
+  const password = document.getElementById('password').value;
+  const passwordConfirm = document.getElementById('passwordConfirm').value;
 
-function nextStep() { if(currentStep < totalSteps-1){ currentStep++; updateUI(); } }
-function prevStep() { if(currentStep > 0){ currentStep--; updateUI(); } }
+  hideMessages();
 
-function selectType(el, type) {
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedType = type;
-  document.getElementById('specBTP').style.display = type === 'btp' ? 'block' : 'none';
-  document.getElementById('specIMMO').style.display = type === 'immo' ? 'block' : 'none';
-}
+  if(!prenom || !nom || !email || !whatsapp || !password){
+    showError('Veuillez remplir tous les champs obligatoires.');
+    return;
+  }
+  if(password.length < 8){
+    showError('Le mot de passe doit contenir au moins 8 caractères.');
+    return;
+  }
+  if(password !== passwordConfirm){
+    showError('Les mots de passe ne correspondent pas.');
+    return;
+  }
 
-function selectSpec(el, name) {
-  document.querySelectorAll('.spec-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span> Création...';
+  btn.disabled = true;
 
-function selectDispo(el) {
-  document.querySelectorAll('.dispo-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function addExp() {
-  const c = document.getElementById('expContainer');
-  const d = document.createElement('div');
-  d.className = 'exp-item'; d.id = 'exp'+expCount;
-  d.innerHTML = `
-    <button class="exp-remove" onclick="this.parentElement.remove()"><i class="ti ti-x"></i></button>
-    <div class="form-group"><label class="form-label">Nom du projet</label><input class="form-input no-icon" type="text" placeholder="Ex: Villa Achakar — Tanger"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Ville</label><input class="form-input no-icon" type="text" placeholder="Tanger"></div>
-      <div class="form-group"><label class="form-label">Année</label><input class="form-input no-icon" type="text" placeholder="2024"></div>
-    </div>
-    <div class="form-group" style="margin-bottom:0;"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Votre rôle..." style="min-height:70px;"></textarea></div>
-  `;
-  c.appendChild(d); expCount++;
-}
-
-async function submitForm() {
-  const btn = document.querySelector('#panel4 .btn-primary');
-  btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Création...';
-  btn.style.pointerEvents = 'none';
-  const data = {
-    nom: document.querySelector('[placeholder="Dupont"]')?.value||'',
-    prenom: document.querySelector('[placeholder="Jean"]')?.value||'',
-    email: document.querySelector('[placeholder="jean@exemple.com"]')?.value||'',
-    whatsapp: document.querySelector('[placeholder="+212 6XX XXX XXX"]')?.value||'',
-    societe: document.querySelector('[placeholder="Votre société"]')?.value||'',
-    ville: document.querySelector('[placeholder="Tanger"]')?.value||'',
-    plan: 'starter'
-  };
   try {
-    await fetch('https://buildra.onrender.com/api/inscription', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  } catch(e) { console.error(e); }
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panelSuccess').classList.add('active');
-  document.getElementById('progressFill').style.width = '100%';
-  window.scrollTo({top:0,behavior:'smooth'});
+    const res = await fetch(API + '/api/inscription', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({nom, prenom, email, whatsapp, ville, societe, password, plan: 'starter'})
+    });
+    const data = await res.json();
+    if(data.success){
+      localStorage.setItem('binaty_user', JSON.stringify({nom: data.nom || nom, id: data.id, email}));
+      showSuccess('Compte créé ! Redirection vers votre dashboard...');
+      setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    } else {
+      showError(data.error || 'Une erreur est survenue.');
+      btn.innerHTML = 'Créer mon compte';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    showError('Erreur de connexion. Réessayez.');
+    btn.innerHTML = 'Créer mon compte';
+    btn.disabled = false;
+  }
 }
+
+function showError(msg){ const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; }
+function showSuccess(msg){ const el = document.getElementById('successMsg'); el.textContent = msg; el.style.display = 'block'; }
+function hideMessages(){ document.getElementById('errorMsg').style.display='none'; document.getElementById('successMsg').style.display='none'; }
 </script>
 </body>
 </html>
