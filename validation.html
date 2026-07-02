@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaty — Validation</title>
+<style>
+:root{
+  --bg:#0E1410;
+  --panel:#161D18;
+  --line:#26302A;
+  --text:#EDF1ED;
+  --muted:#8A968D;
+  --accent:#5BD68C;
+  --accent-dim:#2F4438;
+  --warn:#E0B341;
+  --urgent:#E0594F;
+  --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  --sans: "Inter", -apple-system, sans-serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+}
+.topbar{
+  padding:20px 28px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:10;
+}
+.brand{
+  font-family:var(--mono);
+  font-size:14px;
+  letter-spacing:0.08em;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+.brand span{color:var(--muted);}
+.topbar-right{display:flex; align-items:center; gap:10px;}
+.count-pill{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:6px 12px;
+  border-radius:100px;
+}
+.count-pill b{color:var(--text);}
+.shortcuts-hint{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+}
+.shortcuts-hint kbd{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:1px 6px;
+  color:var(--text);
+}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:24px 20px 80px;
+}
+
+.empty{
+  text-align:center;
+  padding:80px 20px;
+  color:var(--muted);
+}
+.empty .glyph{font-size:28px; margin-bottom:12px;}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:18px;
+  overflow:hidden;
+  transition:border-color .15s ease, opacity .3s ease, transform .3s ease;
+}
+.card.active{
+  border-color:var(--accent);
+}
+.card.sending{opacity:.5; pointer-events:none;}
+.card.done{opacity:0; transform:translateX(20px);}
+
+.card-head{
+  padding:16px 18px 12px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.chantier{
+  font-size:15px;
+  font-weight:600;
+  color:var(--text);
+}
+.meta{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  margin-top:3px;
+}
+.alert-tag{
+  font-family:var(--mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  padding:4px 9px;
+  border-radius:100px;
+  white-space:nowrap;
+}
+.alert-ok{background:var(--accent-dim); color:var(--accent);}
+.alert-attention{background:#3a3320; color:var(--warn);}
+.alert-urgent{background:#3a2220; color:var(--urgent);}
+
+.audio-row{
+  padding:0 18px 12px;
+}
+.audio-row audio{width:100%; height:36px;}
+.no-media{
+  font-size:12px;
+  color:var(--muted);
+  font-style:italic;
+}
+
+.brut{
+  margin:0 18px 12px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.brut b{
+  display:block;
+  font-family:var(--mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+
+.resume-block{
+  padding:0 18px 12px;
+}
+.resume-label{
+  font-family:var(--mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.resume-edit{
+  width:100%;
+  min-height:80px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:8px;
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.5;
+  padding:10px 12px;
+  resize:vertical;
+  pointer-events:none;
+}
+.card.editing .resume-edit{
+  pointer-events:auto;
+  border-color:var(--accent);
+  background:rgba(91,214,140,.04);
+}
+
+.problemes{
+  margin:0 18px 12px;
+  padding:10px 12px;
+  background:#241a15;
+  border:1px solid #3a2a1e;
+  border-radius:8px;
+  font-size:12px;
+  color:var(--warn);
+}
+.problemes ul{margin:4px 0 0; padding-left:16px;}
+
+.corrections{
+  padding:0 18px 12px;
+  display:none;
+}
+.card.editing .corrections{display:block;}
+.corrections-toggle{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  cursor:pointer;
+  padding:4px 0;
+}
+.corrections-toggle:hover{color:var(--accent);}
+.correction-row{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+.correction-row input{
+  flex:1;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:6px;
+  color:var(--text);
+  font-size:12px;
+  padding:7px 10px;
+}
+.add-correction{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--accent);
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  padding:14px 18px 18px;
+  border-top:1px solid var(--line);
+}
+.actions button{
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:600;
+  border:none;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer;
+  transition:opacity .15s ease;
+}
+.actions button:hover{opacity:.85;}
+.btn-valider{
+  background:var(--accent);
+  color:#0E1410;
+  flex:1;
+}
+.btn-corriger{
+  background:transparent;
+  border:1px solid var(--line) !important;
+  color:var(--text);
+}
+.card.editing .btn-corriger{display:none;}
+.btn-envoyer-correction{
+  background:var(--warn);
+  color:#0E1410;
+  display:none;
+  flex:1;
+}
+.card.editing .btn-envoyer-correction{display:block;}
+.card.editing .btn-valider{display:none;}
+
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--panel);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-size:13px;
+  padding:12px 20px;
+  border-radius:100px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+  z-index:100;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.refresh-bar{
+  text-align:center;
+  padding:12px;
+}
+.refresh-bar span{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+  cursor:pointer;
+}
+.refresh-bar span:hover{color:var(--text);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Binaty <span>· Validation</span></div>
+  <div class="topbar-right">
+    <div class="shortcuts-hint"><kbd>V</kbd> valider · <kbd>C</kbd> corriger · <kbd>Échap</kbd> annuler</div>
+    <div class="count-pill"><b id="count">0</b> en attente</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="list"></div>
+  <div class="refresh-bar"><span onclick="charger()">↻ Actualiser</span></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = "https://buildra.onrender.com";
+let activeId = null;
+
+async function charger(){
+  const list = document.getElementById('list');
+  try{
+    const res = await fetch(`${API_BASE}/api/validations?statut=en_attente`);
+    const data = await res.json();
+    const items = data.validations || [];
+    document.getElementById('count').textContent = items.length;
+
+    if(items.length === 0){
+      list.innerHTML = `<div class="empty"><div class="glyph">✓</div>Rien en attente.<br>Tous les rapports sont à jour.</div>`;
+      activeId = null;
+      return;
+    }
+
+    list.innerHTML = items.map(renderCard).join('');
+
+    for(const item of items){
+      if(item.has_audio || item.has_image){
+        chargerMedia(item.rapport_id);
+      }
+    }
+
+    // La première carte de la liste devient active (raccourcis clavier + autoplay)
+    setActiveCard(items[0].rapport_id);
+  }catch(e){
+    list.innerHTML = `<div class="empty">Erreur de chargement : ${e.message}</div>`;
+  }
+}
+
+function setActiveCard(id){
+  document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById(`card-${id}`);
+  if(card){
+    card.classList.add('active');
+    activeId = id;
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    const audio = card.querySelector('audio');
+    if(audio){ audio.play().catch(()=>{}); }
+  } else {
+    activeId = null;
+  }
+}
+
+function alertClass(niveau){
+  if(niveau === 'urgent') return 'alert-urgent';
+  if(niveau === 'attention') return 'alert-attention';
+  return 'alert-ok';
+}
+
+function renderCard(item){
+  const problemes = (item.problemes || '').split('|').map(p => p.trim()).filter(Boolean);
+  return `
+  <div class="card" id="card-${item.rapport_id}" data-id="${item.rapport_id}" onclick="setActiveCard('${item.rapport_id}')">
+    <div class="card-head">
+      <div>
+        <div class="chantier">${escapeHtml(item.chantier_id)}</div>
+        <div class="meta">${item.type === 'image' ? '📸 photo' : '🎙️ vocal'} · ${escapeHtml(item.timestamp || '')}</div>
+      </div>
+      <div class="alert-tag ${alertClass(item.niveau_alerte)}">${item.niveau_alerte || 'ok'}</div>
+    </div>
+
+    <div class="audio-row" id="media-${item.rapport_id}">
+      <div class="no-media">${(item.has_audio || item.has_image) ? 'Chargement du média…' : 'Aucun média enregistré (rapport avant mise à jour)'}</div>
+    </div>
+
+    ${item.texte_brut ? `<div class="brut"><b>Transcription brute</b>${escapeHtml(item.texte_brut)}</div>` : ''}
+
+    <div class="resume-block">
+      <div class="resume-label">Résumé pour le promoteur</div>
+      <textarea class="resume-edit" id="resume-${item.rapport_id}">${escapeHtml(item.resume_fr || item.avancement_declare || '')}</textarea>
+    </div>
+
+    ${problemes.length ? `<div class="problemes">⚠️ Problèmes signalés<ul>${problemes.map(p=>`<li>${escapeHtml(p)}</li>`).join('')}</ul></div>` : ''}
+
+    <div class="corrections" id="corrections-${item.rapport_id}">
+      <div class="corrections-toggle" onclick="event.stopPropagation(); toggleCorrections('${item.rapport_id}')">+ Signaler un mot darija mal compris</div>
+      <div class="correction-list" id="correction-list-${item.rapport_id}" style="display:none;"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-valider" onclick="event.stopPropagation(); valider('${item.rapport_id}')">✓ Valider et envoyer</button>
+      <button class="btn-corriger" onclick="event.stopPropagation(); modeCorrection('${item.rapport_id}')">✎ Corriger</button>
+      <button class="btn-envoyer-correction" onclick="event.stopPropagation(); envoyerCorrection('${item.rapport_id}')">Envoyer la correction</button>
+    </div>
+  </div>`;
+}
+
+async function chargerMedia(rapportId){
+  try{
+    const res = await fetch(`${API_BASE}/api/validations/${rapportId}/media`);
+    const data = await res.json();
+    const el = document.getElementById(`media-${rapportId}`);
+    if(!el) return;
+    if(data.audio_b64){
+      el.innerHTML = `<audio controls src="data:audio/ogg;base64,${data.audio_b64}"></audio>`;
+      // autoplay si c'est déjà la carte active
+      if(rapportId === activeId){
+        el.querySelector('audio').play().catch(()=>{});
+      }
+    } else if(data.image_b64){
+      el.innerHTML = `<img src="data:image/jpeg;base64,${data.image_b64}" style="width:100%;border-radius:8px;display:block;">`;
+    } else {
+      el.innerHTML = `<div class="no-media">Pas de média associé</div>`;
+    }
+  }catch(e){
+    const el = document.getElementById(`media-${rapportId}`);
+    if(el) el.innerHTML = `<div class="no-media">Média indisponible</div>`;
+  }
+}
+
+function toggleCorrections(id){
+  const listEl = document.getElementById(`correction-list-${id}`);
+  if(listEl.style.display === 'none'){
+    listEl.style.display = 'block';
+    if(listEl.children.length === 0) addCorrectionRow(id);
+  } else {
+    listEl.style.display = 'none';
+  }
+}
+
+function addCorrectionRow(id){
+  const listEl = document.getElementById(`correction-list-${id}`);
+  const row = document.createElement('div');
+  row.className = 'correction-row';
+  row.innerHTML = `
+    <input type="text" placeholder="mot darija" class="mot-darija">
+    <input type="text" placeholder="traduction correcte" class="mot-traduction">
+  `;
+  listEl.appendChild(row);
+  if(!listEl.querySelector('.add-correction')){
+    const add = document.createElement('div');
+    add.className = 'add-correction';
+    add.textContent = '+ ajouter un autre mot';
+    add.onclick = () => addCorrectionRow(id);
+    listEl.appendChild(add);
+  } else {
+    listEl.appendChild(listEl.querySelector('.add-correction'));
+  }
+}
+
+function modeCorrection(id){
+  document.getElementById(`card-${id}`).classList.add('editing');
+  document.getElementById(`resume-${id}`).focus();
+  setActiveCard(id);
+}
+
+function annulerCorrection(id){
+  const card = document.getElementById(`card-${id}`);
+  if(card) card.classList.remove('editing');
+}
+
+function collecterCorrections(id){
+  const rows = document.querySelectorAll(`#correction-list-${id} .correction-row`);
+  const out = [];
+  rows.forEach(r => {
+    const darija = r.querySelector('.mot-darija').value.trim();
+    const traduction = r.querySelector('.mot-traduction').value.trim();
+    if(darija && traduction) out.push({darija, traduction});
+  });
+  return out;
+}
+
+async function valider(id){
+  const card = document.getElementById(`card-${id}`);
+  card.classList.add('sending');
+  try{
+    const res = await fetch(`${API_BASE}/api/validations/${id}/valider`, {method:'POST'});
+    const data = await res.json();
+    if(data.success){
+      finCard(card);
+      showToast('Rapport envoyé au promoteur ✓');
+    } else {
+      card.classList.remove('sending');
+      showToast('Erreur : ' + (data.error || 'inconnue'));
+    }
+  }catch(e){
+    card.classList.remove('sending');
+    showToast('Erreur réseau');
+  }
+}
+
+async function envoyerCorrection(id){
+  const card = document.getElementById(`card-${id}`);
+  const resume_fr = document.getElementById(`resume-${id}`).value;
+  const mots_corriges = collecterCorrections(id);
+  card.classList.add('sending');
+  try{
+    const res = await fetch(`${API_BASE}/api/validations/${id}/corriger`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({resume_fr, mots_corriges})
+    });
+    const data = await res.json();
+    if(data.success){
+      finCard(card);
+      showToast(mots_corriges.length ? `Envoyé + ${mots_corriges.length} mot(s) ajouté(s) au dico ✓` : 'Rapport corrigé envoyé ✓');
+    } else {
+      card.classList.remove('sending');
+      showToast('Erreur : ' + (data.error || 'inconnue'));
+    }
+  }catch(e){
+    card.classList.remove('sending');
+    showToast('Erreur réseau');
+  }
+}
+
+function finCard(card){
+  card.classList.remove('sending');
+  card.classList.add('done');
+  setTimeout(()=>{
+    card.remove();
+    const remaining = document.querySelectorAll('.card').length;
+    document.getElementById('count').textContent = remaining;
+    if(remaining === 0){
+      document.getElementById('list').innerHTML = `<div class="empty"><div class="glyph">✓</div>Rien en attente.<br>Tous les rapports sont à jour.</div>`;
+      activeId = null;
+    } else {
+      // avance vers la carte suivante automatiquement
+      const next = document.querySelector('.card');
+      if(next) setActiveCard(next.dataset.id);
+    }
+  }, 400);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+// Raccourcis clavier — n'agissent que si aucun champ texte n'est en focus
+document.addEventListener('keydown', (e) => {
+  const tag = document.activeElement.tagName;
+  if(tag === 'TEXTAREA' || tag === 'INPUT'){
+    if(e.key === 'Escape'){
+      document.activeElement.blur();
+      if(activeId) annulerCorrection(activeId);
+    }
+    return;
+  }
+  if(!activeId) return;
+  const card = document.getElementById(`card-${activeId}`);
+  if(!card || card.classList.contains('sending')) return;
+
+  if(e.key === 'v' || e.key === 'V'){
+    e.preventDefault();
+    valider(activeId);
+  } else if(e.key === 'c' || e.key === 'C'){
+    e.preventDefault();
+    modeCorrection(activeId);
+  } else if(e.key === 'Escape'){
+    e.preventDefault();
+    annulerCorrection(activeId);
+  }
+});
+
+charger();
+setInterval(charger, 30000); // auto-refresh toutes les 30s
+</script>
+
+</body>
+</html>
