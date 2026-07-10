@@ -161,6 +161,7 @@ nav.solid { background: rgba(7,15,10,0.92); backdrop-filter: blur(14px); border-
 .chapter-caption {
   position: absolute; left: 4%; bottom: 10vh; z-index: 3;
   max-width: 640px;
+  will-change: opacity, transform;
 }
 .chapter-num {
   font-family: var(--mono); font-size: 12px; letter-spacing: 6px;
@@ -539,21 +540,45 @@ footer {
   var descEl = document.getElementById('chapDesc');
   var pctEl = document.getElementById('chapPct');
   var wrap = document.getElementById('chapters');
+  var caption = document.querySelector('.chapter-caption');
   var current = -1;
+  var targetP = 0, smoothPos = 0;
 
-  function chapterScroll() {
+  function readScroll() {
     var rect = wrap.getBoundingClientRect();
     var total = wrap.offsetHeight - window.innerHeight;
-    var p = Math.min(1, Math.max(0, -rect.top / total));
-    var pos = p * (imgs.length - 1);
+    targetP = Math.min(1, Math.max(0, -rect.top / total));
+    nav.classList.toggle('solid', window.scrollY > window.innerHeight * 0.7);
+  }
+  window.addEventListener('scroll', readScroll, { passive: true });
+  readScroll();
+
+  // boucle fluide : inertie + fondu long + zoom continu = effet vidéo
+  function renderChapters() {
+    var pos = targetP * (imgs.length - 1);
+    smoothPos += (pos - smoothPos) * 0.065; // inertie douce
+    if (Math.abs(pos - smoothPos) < 0.0005) smoothPos = pos;
 
     imgs.forEach(function (img, i) {
-      var d = 1 - Math.min(1, Math.abs(pos - i) * 1.6);
-      img.style.opacity = Math.max(0, d).toFixed(3);
-      img.style.transform = 'scale(' + (1.06 - Math.max(0, d) * 0.06) + ')';
+      var dist = smoothPos - i;
+      // fondu large : chaque image reste visible sur ±1 chapitre entier
+      var o = 1 - Math.min(1, Math.abs(dist));
+      // easing du fondu (plus doux au milieu)
+      o = o * o * (3 - 2 * o);
+      img.style.opacity = o.toFixed(3);
+      // zoom continu type plan de drone : l'image avance pendant tout son passage
+      var s = 1.14 - 0.10 * ((dist + 1) / 2 + 0.5);
+      var y = dist * -3.5; // léger travelling vertical
+      img.style.transform = 'scale(' + Math.max(1, s).toFixed(4) + ') translateY(' + y.toFixed(2) + 'vh)';
     });
 
-    var idx = Math.round(pos);
+    // texte : fondu entre chapitres au lieu de saut
+    var idx = Math.round(smoothPos);
+    var edge = Math.abs(smoothPos - idx); // 0 = pile sur le chapitre, 0.5 = transition
+    var capOp = Math.min(1, Math.max(0, (0.42 - edge) * 4.5));
+    caption.style.opacity = capOp.toFixed(3);
+    caption.style.transform = 'translateY(' + ((1 - capOp) * 14) + 'px)';
+
     if (idx !== current && idx >= 0 && idx < chapters.length) {
       current = idx;
       var c = chapters[idx];
@@ -562,17 +587,11 @@ footer {
       descEl.textContent = c.desc;
       dots.forEach(function (d, k) { d.classList.toggle('on', k === idx); });
     }
-    // pourcentage continu
-    var pct = Math.round(p * 100);
-    pctEl.textContent = pct;
-  }
 
-  function onScroll() {
-    nav.classList.toggle('solid', window.scrollY > window.innerHeight * 0.7);
-    chapterScroll();
+    pctEl.textContent = Math.round((smoothPos / (imgs.length - 1)) * 100);
+    requestAnimationFrame(renderChapters);
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  requestAnimationFrame(renderChapters);
 
   // ── Reveal au scroll ──
   var obs = new IntersectionObserver(function (entries) {
