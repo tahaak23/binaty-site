@@ -185,6 +185,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     <div class="nav-item" onclick="showPage('chantiers')"><i class="ti ti-building-warehouse"></i> Chantiers</div>
     <div class="nav-item" onclick="showPage('rapports')"><i class="ti ti-file-text"></i> Rapports</div>
     <div class="nav-item" onclick="showPage('alertes')"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item" onclick="showPage('paiements')"><i class="ti ti-cash"></i> Paiements</div>
+    <div class="nav-item" onclick="showPage('materiaux')"><i class="ti ti-packages"></i> Matériaux</div>
     <div class="nav-item" onclick="showPage('equipes')"><i class="ti ti-users"></i> Équipes</div>
     <div class="nav-item" onclick="showPage('stats')"><i class="ti ti-chart-bar"></i> Statistiques</div>
     <div class="nav-item" onclick="showPage('parametres')"><i class="ti ti-settings"></i> Paramètres</div>
@@ -391,6 +393,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     </div>
   </div>
 
+  <!-- ═══ PAGE: PAIEMENTS ═══ -->
+  <div id="page-paiements" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-cash"></i> Paiements déclarés</div>
+        <span class="card-badge" id="paiementsTotal">--</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--g4);margin:-6px 0 14px;">Chaque paiement annoncé par vos chefs sur WhatsApp ("khalast lmoualim 5000 dh") est détecté par l'IA, validé, puis archivé ici. Fini les comptes sur un coin de table.</p>
+      <div id="paiementsList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: MATÉRIAUX ═══ -->
+  <div id="page-materiaux" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-packages"></i> Registre matériaux</div>
+        <span class="card-badge" id="materiauxCount">--</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--g4);margin:-6px 0 14px;">Livraisons et consommations détectées dans les rapports ("wslat 100 sac ciment"). Toute consommation sans livraison correspondante est signalée ⚠️ à vérifier.</p>
+      <div id="materiauxList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ PAGE: EQUIPES ═══ -->
   <div id="page-equipes" class="page-section">
     <div class="coming-soon">
@@ -453,6 +485,8 @@ const pageTitles = {
   chantiers: 'Chantiers',
   rapports: 'Rapports',
   alertes: 'Alertes',
+  paiements: 'Paiements',
+  materiaux: 'Matériaux',
   equipes: 'Équipes',
   stats: 'Statistiques',
   parametres: 'Paramètres'
@@ -488,6 +522,8 @@ function showPage(page) {
   if(page === 'chantiers') loadChantiersFull();
   if(page === 'rapports') loadRapportsFull();
   if(page === 'alertes') loadAlertesFull();
+  if(page === 'paiements') loadPaiementsFull();
+  if(page === 'materiaux') loadMateriauxFull();
 
   closeSidebarIfMobile();
 }
@@ -580,6 +616,52 @@ async function loadAlertesFull() {
         <div class="alerte-title">${a.type}</div>
         <div class="alerte-sub">${a.message}</div>
       </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadPaiementsFull() {
+  const paiements = [
+    { date: '2025-07-11', montant: 5000, devise: 'MAD', beneficiaire: 'Maalem Abdelkader', type: 'main_oeuvre', chantier: 'Résidence Al Manar' },
+    { date: '2025-07-10', montant: 12400, devise: 'MAD', beneficiaire: 'Fournisseur Drissi Matériaux', type: 'materiaux', chantier: 'Immeuble Andalous' },
+    { date: '2025-07-09', montant: 3200, devise: 'MAD', beneficiaire: 'Équipe plâtrage', type: 'main_oeuvre', chantier: 'Villa Cap Spartel' },
+    { date: '2025-07-08', montant: 1800, devise: 'MAD', beneficiaire: 'Transport gravier', type: 'autre', chantier: 'Résidence Al Manar' },
+  ];
+  const total = paiements.reduce((a,p) => a + p.montant, 0);
+  document.getElementById('paiementsTotal').textContent = total.toLocaleString('fr-FR') + ' MAD';
+  document.getElementById('paiementsList').innerHTML = paiements.map(p => {
+    const typeLbl = p.type === 'main_oeuvre' ? "Main d'œuvre" : p.type === 'materiaux' ? 'Matériaux' : 'Autre';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ok">💰</div>
+      <div class="rapport-content">
+        <div class="rapport-title">${p.montant.toLocaleString('fr-FR')} ${p.devise} → ${p.beneficiaire}</div>
+        <div class="rapport-sub">${p.chantier} • ${typeLbl} • déclaré via WhatsApp, validé</div>
+      </div>
+      <div class="rapport-time">${p.date}</div>
+    </div>`;
+  }).join('');
+}
+
+async function loadMateriauxFull() {
+  const mouvements = [
+    { date: '2025-07-11', type: 'livraison', materiau: 'Ciment', quantite: 100, unite: 'sacs', chantier: 'Résidence Al Manar', flag: '' },
+    { date: '2025-07-11', type: 'consommation', materiau: 'Ciment', quantite: 40, unite: 'sacs', chantier: 'Résidence Al Manar', flag: '' },
+    { date: '2025-07-10', type: 'consommation', materiau: 'Fer à béton', quantite: 300, unite: 'kg', chantier: 'Immeuble Andalous', flag: '⚠️ à vérifier' },
+    { date: '2025-07-09', type: 'livraison', materiau: 'Sable', quantite: 3, unite: 'camions', chantier: 'Villa Cap Spartel', flag: '' },
+  ];
+  const aVerifier = mouvements.filter(m => m.flag).length;
+  document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ` • ${aVerifier} ⚠️` : '');
+  document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
+    const isLiv = m.type === 'livraison';
+    const cls = m.flag ? 'warn' : (isLiv ? 'ok' : '');
+    const icon = m.flag ? '⚠️' : (isLiv ? '📥' : '📤');
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${cls}">${icon}</div>
+      <div class="rapport-content">
+        <div class="rapport-title">${isLiv ? 'Livraison' : 'Consommation'} — ${m.quantite} ${m.unite} ${m.materiau}</div>
+        <div class="rapport-sub">${m.chantier}${m.flag ? ' • consommation sans livraison correspondante — ' + m.flag : ''}</div>
+      </div>
+      <div class="rapport-time">${m.date}</div>
     </div>`;
   }).join('');
 }

@@ -185,6 +185,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     <div class="nav-item" onclick="showPage('chantiers')"><i class="ti ti-building-warehouse"></i> Chantiers</div>
     <div class="nav-item" onclick="showPage('rapports')"><i class="ti ti-file-text"></i> Rapports</div>
     <div class="nav-item" onclick="showPage('alertes')"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item" onclick="showPage('paiements')"><i class="ti ti-cash"></i> Paiements</div>
+    <div class="nav-item" onclick="showPage('materiaux')"><i class="ti ti-packages"></i> Matériaux</div>
     <div class="nav-item" onclick="showPage('equipes')"><i class="ti ti-users"></i> Équipes</div>
     <div class="nav-item" onclick="showPage('stats')"><i class="ti ti-chart-bar"></i> Statistiques</div>
     <div class="nav-item" onclick="showPage('parametres')"><i class="ti ti-settings"></i> Paramètres</div>
@@ -380,6 +382,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     </div>
   </div>
 
+  <!-- ═══ PAGE: PAIEMENTS ═══ -->
+  <div id="page-paiements" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-cash"></i> Paiements déclarés</div>
+        <span class="card-badge" id="paiementsTotal">--</span>
+      </div>
+      <div id="paiementsList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE: MATÉRIAUX ═══ -->
+  <div id="page-materiaux" class="page-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-packages"></i> Registre matériaux</div>
+        <span class="card-badge" id="materiauxCount">--</span>
+      </div>
+      <div id="materiauxList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ PAGE: EQUIPES ═══ -->
   <div id="page-equipes" class="page-section">
     <div class="coming-soon">
@@ -442,6 +472,8 @@ const pageTitles = {
   chantiers: 'Chantiers',
   rapports: 'Rapports',
   alertes: 'Alertes',
+  paiements: 'Paiements',
+  materiaux: 'Matériaux',
   equipes: 'Équipes',
   stats: 'Statistiques',
   parametres: 'Paramètres'
@@ -477,6 +509,8 @@ function showPage(page) {
   if(page === 'chantiers') loadChantiersFull();
   if(page === 'rapports') loadRapportsFull();
   if(page === 'alertes') loadAlertesFull();
+  if(page === 'paiements') loadPaiementsFull();
+  if(page === 'materiaux') loadMateriauxFull();
 
   closeSidebarIfMobile();
 }
@@ -649,6 +683,66 @@ async function loadAlertesFull() {
     }
   } catch(e) {
     document.getElementById('alertesListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
+  }
+}
+
+async function loadPaiementsFull() {
+  try {
+    const res = await fetch(API + '/api/paiements?limit=50');
+    if(res.ok) {
+      const data = await res.json();
+      const paiements = data.paiements || [];
+      document.getElementById('paiementsTotal').textContent = (data.total || 0).toLocaleString('fr-FR') + ' MAD';
+      if(!paiements.length) {
+        document.getElementById('paiementsList').innerHTML = '<div class="empty"><i class="ti ti-cash"></i><p>Aucun paiement validé pour le moment</p></div>';
+        return;
+      }
+      document.getElementById('paiementsList').innerHTML = paiements.map(p => {
+        const typeLbl = p.type === 'main_oeuvre' ? "Main d'œuvre" : p.type === 'materiaux' ? 'Matériaux' : 'Autre';
+        const montant = parseFloat(p.montant || 0).toLocaleString('fr-FR');
+        return `<div class="rapport-item">
+          <div class="rapport-icon ok">💰</div>
+          <div class="rapport-content">
+            <div class="rapport-title">${montant} ${p.devise || 'MAD'} → ${p.beneficiaire || 'non précisé'}</div>
+            <div class="rapport-sub">${p.chantier_nom || p.chantier_id || ''} • ${typeLbl}</div>
+          </div>
+          <div class="rapport-time">${p.date || ''} ${p.heure || ''}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('paiementsList').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
+  }
+}
+
+async function loadMateriauxFull() {
+  try {
+    const res = await fetch(API + '/api/materiaux?limit=50');
+    if(res.ok) {
+      const data = await res.json();
+      const mouvements = data.materiaux || [];
+      const aVerifier = data.a_verifier || 0;
+      document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ` • ${aVerifier} ⚠️` : '');
+      if(!mouvements.length) {
+        document.getElementById('materiauxList').innerHTML = '<div class="empty"><i class="ti ti-packages"></i><p>Aucun mouvement matériaux validé</p></div>';
+        return;
+      }
+      document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
+        const isLiv = m.type === 'livraison';
+        const cls = m.flag ? 'warn' : (isLiv ? 'ok' : '');
+        const icon = m.flag ? '⚠️' : (isLiv ? '📥' : '📤');
+        return `<div class="rapport-item">
+          <div class="rapport-icon ${cls}">${icon}</div>
+          <div class="rapport-content">
+            <div class="rapport-title">${isLiv ? 'Livraison' : 'Consommation'} — ${m.quantite || '?'} ${m.unite || ''} ${m.materiau || ''}</div>
+            <div class="rapport-sub">${m.chantier_nom || m.chantier_id || ''}${m.flag ? ' • ' + m.flag : ''}</div>
+          </div>
+          <div class="rapport-time">${m.date || ''} ${m.heure || ''}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('materiauxList').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
   }
 }
 
