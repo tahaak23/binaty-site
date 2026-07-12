@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Binaty — Dashboard</title>
+<title>Binaty — Démo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -161,7 +161,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 .coming-soon h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;}
 .coming-soon p{font-size:14px;color:var(--g4);max-width:400px;line-height:1.6;}
 
-.hamburger-btn{display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;}
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .25s ease;width:260px;box-shadow:8px 0 24px rgba(0,0,0,0.4);}
   .sidebar.open{transform:translateX(0);}
@@ -172,6 +171,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
   .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
   .sidebar-backdrop.open{display:block;}
 }
+.hamburger-btn{display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;}
 </style>
 </head>
 <body>
@@ -185,8 +185,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     <div class="nav-item" onclick="showPage('chantiers')"><i class="ti ti-building-warehouse"></i> Chantiers</div>
     <div class="nav-item" onclick="showPage('rapports')"><i class="ti ti-file-text"></i> Rapports</div>
     <div class="nav-item" onclick="showPage('alertes')"><i class="ti ti-bell"></i> Alertes</div>
-    <div class="nav-item" onclick="showPage('paiements')"><i class="ti ti-cash"></i> Paiements</div>
-    <div class="nav-item" onclick="showPage('materiaux')"><i class="ti ti-packages"></i> Matériaux</div>
     <div class="nav-item" onclick="showPage('equipes')"><i class="ti ti-users"></i> Équipes</div>
     <div class="nav-item" onclick="showPage('stats')"><i class="ti ti-chart-bar"></i> Statistiques</div>
     <div class="nav-item" onclick="showPage('parametres')"><i class="ti ti-settings"></i> Paramètres</div>
@@ -199,11 +197,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 <!-- MAIN -->
 <main class="main">
 
+  <!-- BANDEAU MODE DÉMO -->
+  <div style="background:rgba(74,144,101,0.12);border:0.5px solid rgba(127,196,160,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--g5);">
+      <i class="ti ti-eye" style="font-size:16px;color:var(--g3);"></i>
+      Vous explorez Binaty en mode démo — données d'exemple, aucun chantier réel n'est affiché.
+    </div>
+    <a href="inscription.html" style="text-decoration:none;flex-shrink:0;">
+      <button style="background:var(--g3);color:var(--white);border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;">Créer mon compte</button>
+    </a>
+  </div>
+
   <!-- TOPBAR -->
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu" style="font-size:20px;line-height:1;">☰</div>
-      <div id="backBtn" onclick="showPage('dashboard')" aria-label="Retour" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;flex-shrink:0;">←</div>
+      <div class="hamburger-btn" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></div>
       <div>
         <div class="topbar-title" id="pageTitle">Tableau de bord</div>
         <div style="font-size:12px;color:var(--g4);margin-top:2px;" id="lastUpdate">Chargement...</div>
@@ -215,17 +223,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
       </button>
       <div class="notif-btn" onclick="showPage('alertes')"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
       <div class="avatar-wrap">
-        <div class="avatar" id="userAvatar" onclick="toggleAvatarMenu()">T</div>
+        <div class="avatar" id="userAvatar" onclick="toggleAvatarMenu()">D</div>
         <div class="avatar-dropdown" id="avatarDropdown">
           <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-name" id="dropdownName">—</div>
             <div class="avatar-dropdown-email" id="dropdownEmail">—</div>
           </div>
-          <div class="avatar-dropdown-item" onclick="showPage('parametres');toggleAvatarMenu()">
-            <i class="ti ti-settings"></i> Paramètres
+          <div class="avatar-dropdown-item" onclick="window.location.href='inscription.html'">
+            <i class="ti ti-user-plus"></i> Créer mon compte
           </div>
           <div class="avatar-dropdown-item danger" onclick="logout()">
-            <i class="ti ti-logout"></i> Déconnexion
+            <i class="ti ti-arrow-left"></i> Quitter la démo
           </div>
         </div>
       </div>
@@ -383,34 +391,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
     </div>
   </div>
 
-  <!-- ═══ PAGE: PAIEMENTS ═══ -->
-  <div id="page-paiements" class="page-section">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><i class="ti ti-cash"></i> Paiements déclarés</div>
-        <span class="card-badge" id="paiementsTotal">--</span>
-      </div>
-      <div id="paiementsList">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ PAGE: MATÉRIAUX ═══ -->
-  <div id="page-materiaux" class="page-section">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><i class="ti ti-packages"></i> Registre matériaux</div>
-        <span class="card-badge" id="materiauxCount">--</span>
-      </div>
-      <div id="materiauxList">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- ═══ PAGE: EQUIPES ═══ -->
   <div id="page-equipes" class="page-section">
     <div class="coming-soon">
@@ -442,19 +422,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 
 <script>
 const API = 'https://buildra.onrender.com';
-const user = JSON.parse(localStorage.getItem('binaty_user') || 'null');
-const TOKEN = localStorage.getItem('binaty_token');
-if(!user || !TOKEN) { localStorage.clear(); window.location.href = 'login.html'; }
-
-// fetch authentifié : ajoute le token, déconnecte si 401
-function authFetch(url, opts) {
-  opts = opts || {};
-  opts.headers = Object.assign({}, opts.headers, {'Authorization': 'Bearer ' + TOKEN});
-  return fetch(url, opts).then(function(r){
-    if(r.status === 401){ localStorage.clear(); window.location.href = 'login.html'; }
-    return r;
-  });
-}
+const DEMO_MODE = true;
+const user = { nom: 'Mode Démo', email: 'demo@binaty.ma' };
 
 // ─── AVATAR / USER MENU ─────────────────────────────────
 function populateUserInfo() {
@@ -484,8 +453,6 @@ const pageTitles = {
   chantiers: 'Chantiers',
   rapports: 'Rapports',
   alertes: 'Alertes',
-  paiements: 'Paiements',
-  materiaux: 'Matériaux',
   equipes: 'Équipes',
   stats: 'Statistiques',
   parametres: 'Paramètres'
@@ -516,247 +483,105 @@ function showPage(page) {
   });
 
   document.getElementById('pageTitle').textContent = pageTitles[page] || 'Tableau de bord';
-  document.getElementById('backBtn').style.display = (page === 'dashboard') ? 'none' : 'flex';
 
   // Load full data for sub-pages
   if(page === 'chantiers') loadChantiersFull();
   if(page === 'rapports') loadRapportsFull();
   if(page === 'alertes') loadAlertesFull();
-  if(page === 'paiements') loadPaiementsFull();
-  if(page === 'materiaux') loadMateriauxFull();
 
   closeSidebarIfMobile();
 }
 
-// ─── LOGOUT ─────────────────────────────────────────────
+// ─── LOGOUT (mode démo : retour à l'accueil) ────────────
 function logout() {
-  localStorage.removeItem("binaty_token");
-  localStorage.removeItem("binaty_user");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 // ─── LOAD DATA ──────────────────────────────────────────
 async function loadData() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
-  setStatus('loading','Connexion...');
+  setStatus('ok','Mode démo');
+  document.getElementById('lastUpdate').textContent = 'Mode démo — données d\'exemple';
 
-  try { await authFetch(API + '/webhook', {method:'GET'}); } catch(e) {}
+  await new Promise(r => setTimeout(r, 350));
 
-  try {
-    const [statsRes, chantiersRes, rapportsRes, scoresRes, alertesRes, progressionRes] = await Promise.allSettled([
-      authFetch(API + '/api/stats'),
-      authFetch(API + '/api/chantiers'),
-      authFetch(API + '/api/rapports?limit=5'),
-      authFetch(API + '/api/scores'),
-      authFetch(API + '/api/alertes?limit=4'),
-      authFetch(API + '/api/progression'),
-    ]);
-
-    setStatus('ok','API connectée');
-    document.getElementById('lastUpdate').textContent = 'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-
-    if(statsRes.status==='fulfilled' && statsRes.value.ok) {
-      const stats = await statsRes.value.json();
-      animCount('statChantiers', stats.chantiers_actifs || 0);
-      animCount('statRapports', stats.rapports_total || 0);
-      animCount('statAlertes', stats.alertes_actives || 0);
-      document.getElementById('trendChantiers').textContent = `${stats.chantiers_actifs || 0} en cours`;
-      document.getElementById('trendRapports').textContent = `${stats.rapports_aujourd_hui || 0} aujourd'hui`;
-      if(stats.alertes_actives > 0) {
-        document.getElementById('notifDot').style.display = 'block';
-        document.getElementById('trendAlertes').innerHTML = `<span style="color:var(--danger)">${stats.alertes_actives} non traitées</span>`;
-      }
-    } else { renderDemoStats(); }
-
-    if(chantiersRes.status==='fulfilled' && chantiersRes.value.ok) {
-      const data = await chantiersRes.value.json();
-      renderChantiers(data.chantiers || []);
-    } else { renderDemoChantiers(); }
-
-    if(rapportsRes.status==='fulfilled' && rapportsRes.value.ok) {
-      const data = await rapportsRes.value.json();
-      renderRapports(data.rapports || []);
-    } else { renderDemoRapports(); }
-
-    if(scoresRes.status==='fulfilled' && scoresRes.value.ok) {
-      const data = await scoresRes.value.json();
-      renderScores(data.scores || []);
-    } else { renderDemoScore(); }
-
-    if(alertesRes.status==='fulfilled' && alertesRes.value.ok) {
-      const data = await alertesRes.value.json();
-      renderAlertes(data.alertes || []);
-    } else { renderDemoAlertes(); }
-
-    if(progressionRes.status==='fulfilled' && progressionRes.value.ok) {
-      const data = await progressionRes.value.json();
-      renderProgressionChart(data.progression || {});
-    } else { renderDemoProgressionChart(); }
-
-  } catch(e) {
-    setStatus('err','Hors ligne');
-    renderDemoStats();
-    renderDemoChantiers();
-    renderDemoRapports();
-    renderDemoScore();
-    renderDemoAlertes();
-    renderDemoProgressionChart();
-    document.getElementById('lastUpdate').textContent = 'Mode démo — données exemple';
-  }
+  renderDemoStats();
+  renderDemoChantiers();
+  renderDemoRapports();
+  renderDemoScore();
+  renderDemoAlertes();
+  renderDemoProgressionChart();
 
   btn.classList.remove('loading');
 }
 
 // ─── SUB-PAGE LOADERS ───────────────────────────────────
 async function loadChantiersFull() {
-  try {
-    const res = await authFetch(API + '/api/chantiers');
-    if(res.ok) {
-      const data = await res.json();
-      const chantiers = data.chantiers || [];
-      document.getElementById('chantiersCount2').textContent = chantiers.length + ' chantiers';
-      if(!chantiers.length) {
-        document.getElementById('chantiersListFull').innerHTML = '<div class="empty"><i class="ti ti-building-warehouse"></i><p>Aucun chantier actif</p></div>';
-        return;
-      }
-      document.getElementById('chantiersListFull').innerHTML = chantiers.map(c => {
-        const pct = c.avancement_pct || 0;
-        return `<div class="chantier-item">
-          <div class="chantier-avatar">🏗️</div>
-          <div class="chantier-info">
-            <div class="chantier-name">${c.nom || 'Chantier'}</div>
-            <div class="chantier-sub">${c.quartier || ''} • Chef: ${c.chef_whatsapp || '--'}</div>
-          </div>
-          <div class="chantier-right">
-            <div class="progress-bar"><div class="progress-fill-bar" style="width:${pct}%"></div></div>
-            <div class="progress-pct">${pct}%</div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('chantiersListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
-  }
+  const chantiers = [
+    { nom: 'Résidence Al Manar', quartier: 'Malabata', chef_whatsapp: '+212 6 12 34 56 78', avancement_pct: 68 },
+    { nom: 'Immeuble Andalous', quartier: 'Iberia', chef_whatsapp: '+212 6 23 45 67 89', avancement_pct: 42 },
+    { nom: 'Villa Cap Spartel', quartier: 'Boukhalef', chef_whatsapp: '+212 6 34 56 78 90', avancement_pct: 91 },
+  ];
+  document.getElementById('chantiersCount2').textContent = chantiers.length + ' chantiers';
+  document.getElementById('chantiersListFull').innerHTML = chantiers.map(c => {
+    const pct = c.avancement_pct || 0;
+    return `<div class="chantier-item">
+      <div class="chantier-avatar">🏗️</div>
+      <div class="chantier-info">
+        <div class="chantier-name">${c.nom}</div>
+        <div class="chantier-sub">${c.quartier} • Chef: ${c.chef_whatsapp}</div>
+      </div>
+      <div class="chantier-right">
+        <div class="progress-bar"><div class="progress-fill-bar" style="width:${pct}%"></div></div>
+        <div class="progress-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function loadRapportsFull() {
-  try {
-    const res = await authFetch(API + '/api/rapports?limit=50');
-    if(res.ok) {
-      const data = await res.json();
-      const rapports = data.rapports || [];
-      document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
-      if(!rapports.length) {
-        document.getElementById('rapportsListFull').innerHTML = '<div class="empty"><i class="ti ti-file-text"></i><p>Aucun rapport disponible</p></div>';
-        return;
-      }
-      document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
-        const isAlerte = r.alerte === 'oui';
-        const isCoh = r.coherence === 'oui';
-        const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
-        const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
-        return `<div class="rapport-item">
-          <div class="rapport-icon ${cls}">${icon}</div>
-          <div class="rapport-content">
-            <div class="rapport-title">${r.chantier_id || 'Chantier'} — ${r.type || 'Rapport'}</div>
-            <div class="rapport-sub">${r.resume_fr || r.declaration || 'Rapport généré automatiquement'}</div>
-          </div>
-          <div class="rapport-time">${r.heure || '--'}</div>
-        </div>`;
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('rapportsListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
-  }
+  const rapports = [
+    { chantier_id: 'Résidence Al Manar', type: 'texte', resume_fr: 'Coulage de la dalle du 2ème étage terminé.', alerte: 'non', coherence: 'oui', heure: '09:14' },
+    { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Manque de fer à béton signalé, livraison attendue demain.', alerte: 'non', coherence: 'partiel', heure: '11:02' },
+    { chantier_id: 'Villa Cap Spartel', type: 'photo', resume_fr: 'Plâtrage du séjour terminé, photo conforme à la déclaration.', alerte: 'non', coherence: 'oui', heure: '14:37' },
+    { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Absence d\'approvisionnement en eau sur le chantier aujourd\'hui.', alerte: 'oui', coherence: 'oui', heure: '16:50' },
+  ];
+  document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
+  document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
+    const isAlerte = r.alerte === 'oui';
+    const isCoh = r.coherence === 'oui';
+    const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
+    const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${cls}">${icon}</div>
+      <div class="rapport-content">
+        <div class="rapport-title">${r.chantier_id} — ${r.type}</div>
+        <div class="rapport-sub">${r.resume_fr}</div>
+      </div>
+      <div class="rapport-time">${r.heure}</div>
+    </div>`;
+  }).join('');
 }
 
 async function loadAlertesFull() {
-  try {
-    const res = await authFetch(API + '/api/alertes?limit=50');
-    if(res.ok) {
-      const data = await res.json();
-      const alertes = data.alertes || [];
-      document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
-      if(!alertes.length) {
-        document.getElementById('alertesListFull').innerHTML = '<div class="empty"><i class="ti ti-bell"></i><p>Aucune alerte</p></div>';
-        return;
-      }
-      document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
-        const level = a.niveau || 'low';
-        const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
-        return `<div class="alerte-item ${level}">
-          <div class="alerte-icon">${icon}</div>
-          <div>
-            <div class="alerte-title">${a.type || 'Alerte'}</div>
-            <div class="alerte-sub">${a.message || ''}</div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('alertesListFull').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
-  }
-}
-
-async function loadPaiementsFull() {
-  try {
-    const res = await authFetch(API + '/api/paiements?limit=50');
-    if(res.ok) {
-      const data = await res.json();
-      const paiements = data.paiements || [];
-      document.getElementById('paiementsTotal').textContent = (data.total || 0).toLocaleString('fr-FR') + ' MAD';
-      if(!paiements.length) {
-        document.getElementById('paiementsList').innerHTML = '<div class="empty"><i class="ti ti-cash"></i><p>Aucun paiement validé pour le moment</p></div>';
-        return;
-      }
-      document.getElementById('paiementsList').innerHTML = paiements.map(p => {
-        const typeLbl = p.type === 'main_oeuvre' ? "Main d'œuvre" : p.type === 'materiaux' ? 'Matériaux' : 'Autre';
-        const montant = parseFloat(p.montant || 0).toLocaleString('fr-FR');
-        return `<div class="rapport-item">
-          <div class="rapport-icon ok">💰</div>
-          <div class="rapport-content">
-            <div class="rapport-title">${montant} ${p.devise || 'MAD'} → ${p.beneficiaire || 'non précisé'}</div>
-            <div class="rapport-sub">${p.chantier_nom || p.chantier_id || ''} • ${typeLbl}</div>
-          </div>
-          <div class="rapport-time">${p.date || ''} ${p.heure || ''}</div>
-        </div>`;
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('paiementsList').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
-  }
-}
-
-async function loadMateriauxFull() {
-  try {
-    const res = await authFetch(API + '/api/materiaux?limit=50');
-    if(res.ok) {
-      const data = await res.json();
-      const mouvements = data.materiaux || [];
-      const aVerifier = data.a_verifier || 0;
-      document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ` • ${aVerifier} ⚠️` : '');
-      if(!mouvements.length) {
-        document.getElementById('materiauxList').innerHTML = '<div class="empty"><i class="ti ti-packages"></i><p>Aucun mouvement matériaux validé</p></div>';
-        return;
-      }
-      document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
-        const isLiv = m.type === 'livraison';
-        const cls = m.flag ? 'warn' : (isLiv ? 'ok' : '');
-        const icon = m.flag ? '⚠️' : (isLiv ? '📥' : '📤');
-        return `<div class="rapport-item">
-          <div class="rapport-icon ${cls}">${icon}</div>
-          <div class="rapport-content">
-            <div class="rapport-title">${isLiv ? 'Livraison' : 'Consommation'} — ${m.quantite || '?'} ${m.unite || ''} ${m.materiau || ''}</div>
-            <div class="rapport-sub">${m.chantier_nom || m.chantier_id || ''}${m.flag ? ' • ' + m.flag : ''}</div>
-          </div>
-          <div class="rapport-time">${m.date || ''} ${m.heure || ''}</div>
-        </div>`;
-      }).join('');
-    }
-  } catch(e) {
-    document.getElementById('materiauxList').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Erreur de connexion</p></div>';
-  }
+  const alertes = [
+    { type: 'Approvisionnement', message: 'Manque d\'eau sur le chantier Immeuble Andalous', niveau: 'medium' },
+    { type: 'Matériaux', message: 'Fer à béton manquant — Immeuble Andalous', niveau: 'medium' },
+    { type: 'Retard', message: 'Ouvriers absents ce matin — Résidence Al Manar', niveau: 'low' },
+  ];
+  document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
+  document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
+    const level = a.niveau || 'low';
+    const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
+    return `<div class="alerte-item ${level}">
+      <div class="alerte-icon">${icon}</div>
+      <div>
+        <div class="alerte-title">${a.type}</div>
+        <div class="alerte-sub">${a.message}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ─── HELPERS ────────────────────────────────────────────

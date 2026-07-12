@@ -138,6 +138,7 @@ async function inscrire() {
     });
     const data = await res.json();
     if(data.success){
+      if(data.token) localStorage.setItem('binaty_token', data.token);
       localStorage.setItem('binaty_user', JSON.stringify({nom: data.nom || nom, id: data.id, email}));
       showSuccess('Compte créé ! Redirection vers votre dashboard...');
       setTimeout(() => window.location.href = 'dashboard.html', 1200);

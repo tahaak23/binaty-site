@@ -323,12 +323,22 @@ body{
 
 <script>
 const API_BASE = "https://buildra.onrender.com";
+const TOKEN = localStorage.getItem('binaty_token');
+if(!TOKEN){ localStorage.clear(); window.location.href = 'login.html'; }
+function authFetch(url, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, {'Authorization': 'Bearer ' + TOKEN});
+  return fetch(url, opts).then(function(r){
+    if(r.status === 401){ localStorage.clear(); window.location.href = 'login.html'; }
+    return r;
+  });
+}
 let activeId = null;
 
 async function charger(){
   const list = document.getElementById('list');
   try{
-    const res = await fetch(`${API_BASE}/api/validations?statut=en_attente`);
+    const res = await authFetch(`${API_BASE}/api/validations?statut=en_attente`);
     const data = await res.json();
     const items = data.validations || [];
     document.getElementById('count').textContent = items.length;
@@ -414,7 +424,7 @@ function renderCard(item){
 
 async function chargerMedia(rapportId){
   try{
-    const res = await fetch(`${API_BASE}/api/validations/${rapportId}/media`);
+    const res = await authFetch(`${API_BASE}/api/validations/${rapportId}/media`);
     const data = await res.json();
     const el = document.getElementById(`media-${rapportId}`);
     if(!el) return;
@@ -491,7 +501,7 @@ async function valider(id){
   const card = document.getElementById(`card-${id}`);
   card.classList.add('sending');
   try{
-    const res = await fetch(`${API_BASE}/api/validations/${id}/valider`, {method:'POST'});
+    const res = await authFetch(`${API_BASE}/api/validations/${id}/valider`, {method:'POST'});
     const data = await res.json();
     if(data.success){
       finCard(card);
@@ -512,7 +522,7 @@ async function envoyerCorrection(id){
   const mots_corriges = collecterCorrections(id);
   card.classList.add('sending');
   try{
-    const res = await fetch(`${API_BASE}/api/validations/${id}/corriger`, {
+    const res = await authFetch(`${API_BASE}/api/validations/${id}/corriger`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({resume_fr, mots_corriges})
