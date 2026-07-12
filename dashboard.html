@@ -203,6 +203,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu" style="font-size:20px;line-height:1;">☰</div>
+      <div id="backBtn" onclick="showPage('dashboard')" aria-label="Retour" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;flex-shrink:0;">←</div>
       <div>
         <div class="topbar-title" id="pageTitle">Tableau de bord</div>
         <div style="font-size:12px;color:var(--g4);margin-top:2px;" id="lastUpdate">Chargement...</div>
@@ -504,6 +505,7 @@ function showPage(page) {
   });
 
   document.getElementById('pageTitle').textContent = pageTitles[page] || 'Tableau de bord';
+  document.getElementById('backBtn').style.display = (page === 'dashboard') ? 'none' : 'flex';
 
   // Load full data for sub-pages
   if(page === 'chantiers') loadChantiersFull();
