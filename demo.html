@@ -3,194 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binaty — Démo interactive</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<title>Binaty — Démo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
 :root{
-  --g0:#0a1a10;--g1:#1a3a2a;--g2:#2d6b4a;--g3:#4a9065;--g4:#7fc4a0;--g5:#b8d9c5;
-  --white:#f9fdf9;--warn:#c47a00;--danger:#b83232;--r:12px;
+  --bg:#04120a; --surface:rgba(255,255,255,0.03); --glass:rgba(13,36,23,0.72);
+  --line:rgba(110,231,168,0.12); --line-strong:rgba(110,231,168,0.3);
+  --mint:#6ee7a8; --emerald:#10b981; --text:#f0fdf6; --text-2:#9fc9b2; --text-3:#5f8a72;
+  --warn:#f59e0b; --danger:#f87171; --r:16px;
+  --mono:'DM Mono',monospace; --grotesk:'Space Grotesk',sans-serif; --sans:'DM Sans',sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);display:flex;min-height:100vh;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;min-height:100vh;-webkit-font-smoothing:antialiased;}
+::selection{background:rgba(16,185,129,0.35);}
+
+.orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);will-change:transform;opacity:0.4;}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.22),transparent 65%);top:-160px;right:-100px;animation:drift1 30s ease-in-out infinite;}
+.orb-2{width:420px;height:420px;background:radial-gradient(circle,rgba(110,231,168,0.12),transparent 65%);bottom:-120px;left:200px;animation:drift2 36s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,50px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(70px,-40px)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}}
 
 /* SIDEBAR */
-.sidebar{width:220px;background:var(--g1);border-right:0.5px solid rgba(127,196,160,0.1);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;padding:24px 0;}
-.sidebar-logo{font-family:'Playfair Display',serif;font-size:22px;padding:0 20px 24px;border-bottom:0.5px solid rgba(127,196,160,0.1);}
-.sidebar-logo span{color:var(--g3);}
-.sidebar-nav{padding:16px 10px;flex:1;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--g4);cursor:pointer;transition:all .2s;margin-bottom:4px;text-decoration:none;}
-.nav-item:hover,.nav-item.active{background:rgba(74,144,101,0.12);color:var(--white);}
-.nav-item.active{border-left:2.5px solid var(--g3);}
+.sidebar{width:236px;background:rgba(6,22,13,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-right:1px solid var(--line);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;padding:24px 0;}
+.sidebar-logo{font-family:var(--grotesk);font-weight:700;font-size:21px;padding:0 20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;}
+.sidebar-logo .logo-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--emerald),var(--mint));display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(16,185,129,0.45);}
+.sidebar-logo .logo-mark i{font-size:17px;color:#04120a;}
+.sidebar-logo span{background:linear-gradient(90deg,var(--mint),var(--emerald));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.sidebar-nav{padding:18px 12px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:12px;font-size:14px;color:var(--text-2);cursor:pointer;transition:all .25s var(--ease);margin-bottom:4px;position:relative;}
+.nav-item:hover{background:rgba(110,231,168,0.06);color:var(--text);}
+.nav-item.active{background:linear-gradient(90deg,rgba(16,185,129,0.16),rgba(16,185,129,0.04));color:var(--text);font-weight:500;box-shadow:inset 0 0 0 1px var(--line-strong);}
+.nav-item.active::before{content:'';position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:22px;background:linear-gradient(180deg,var(--mint),var(--emerald));border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(16,185,129,0.6);}
 .nav-item i{font-size:18px;}
-.sidebar-footer{padding:16px 20px;border-top:0.5px solid rgba(127,196,160,0.1);font-size:12px;color:var(--g2);}
+.nav-item.active i{color:var(--mint);}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--line);font-size:12px;}
 
 /* MAIN */
-.main{margin-left:220px;flex:1;padding:28px;overflow-y:auto;}
-
-/* PAGE SECTIONS */
-.page-section{display:none;}
-.page-section.active{display:block;}
+.main{margin-left:236px;flex:1;padding:30px;overflow-y:auto;position:relative;z-index:1;}
 
 /* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
-.topbar-title{font-family:'Playfair Display',serif;font-size:24px;}
+.topbar-title{font-family:var(--grotesk);font-weight:700;font-size:26px;letter-spacing:-0.02em;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
-.notif-btn{width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;position:relative;}
-.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);position:absolute;top:6px;right:6px;}
-.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;position:relative;}
-.avatar-dropdown{position:absolute;top:46px;right:0;background:var(--g1);border:0.5px solid rgba(127,196,160,0.2);border-radius:12px;padding:8px;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.4);display:none;z-index:200;}
-.avatar-dropdown.open{display:block;}
-.avatar-dropdown-header{padding:10px 12px;border-bottom:0.5px solid rgba(127,196,160,0.12);margin-bottom:6px;}
-.avatar-dropdown-name{font-size:13px;font-weight:500;color:var(--white);}
-.avatar-dropdown-email{font-size:11px;color:var(--g4);margin-top:2px;}
-.avatar-dropdown-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--g4);cursor:pointer;transition:all .15s;}
-.avatar-dropdown-item:hover{background:rgba(74,144,101,0.12);color:var(--white);}
-.avatar-dropdown-item.danger{color:#ff8080;}
-.avatar-dropdown-item.danger:hover{background:rgba(184,50,50,0.12);}
-.avatar-wrap{position:relative;}
-.refresh-btn{display:flex;align-items:center;gap:6px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.2);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--g4);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
-.refresh-btn:hover{border-color:var(--g3);color:var(--white);}
+.notif-btn{width:40px;height:40px;border-radius:12px;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2);font-size:18px;position:relative;transition:all .25s var(--ease);}
+.notif-btn:hover{border-color:var(--line-strong);color:var(--text);}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);position:absolute;top:8px;right:8px;box-shadow:0 0 8px var(--danger);}
+.avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--emerald),var(--mint));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#04120a;box-shadow:0 0 18px rgba(16,185,129,0.3);}
+.refresh-btn{display:flex;align-items:center;gap:7px;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:13px;color:var(--text-2);cursor:pointer;font-family:var(--sans);transition:all .25s var(--ease);}
+.refresh-btn:hover{border-color:var(--line-strong);color:var(--text);box-shadow:0 0 20px rgba(16,185,129,0.1);}
 .refresh-btn.loading i{animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* STATS GRID */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-.stat-card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--accent);}
-.stat-icon{width:38px;height:38px;border-radius:10px;background:rgba(74,144,101,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;color:var(--accent);}
-.stat-val{font-size:26px;font-weight:700;font-family:'Playfair Display',serif;color:var(--accent);}
-.stat-lbl{font-size:12px;color:var(--g4);margin-top:2px;}
-.stat-trend{font-size:11px;color:var(--g3);margin-top:6px;display:flex;align-items:center;gap:4px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:all .3s var(--ease);}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--line-strong);box-shadow:0 16px 40px rgba(0,0,0,0.3);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.stat-card::after{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%);pointer-events:none;}
+.stat-icon{width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:14px;color:var(--accent);}
+.stat-val{font-size:30px;font-weight:700;font-family:var(--grotesk);color:var(--text);letter-spacing:-0.02em;}
+.stat-lbl{font-size:12px;color:var(--text-2);margin-top:3px;}
+.stat-trend{font-size:11px;color:var(--mint);margin-top:8px;display:flex;align-items:center;gap:4px;font-family:var(--mono);}
 
 /* GRID 2 COL */
-.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:24px;}
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:24px;}
 
 /* CARDS */
-.card{background:var(--g1);border:0.5px solid rgba(127,196,160,0.12);border-radius:var(--r);padding:20px;margin-bottom:14px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.card-title{font-size:14px;font-weight:500;color:var(--white);display:flex;align-items:center;gap:8px;}
-.card-title i{color:var(--g3);font-size:16px;}
-.card-badge{font-size:11px;background:rgba(74,144,101,0.12);color:var(--g3);padding:3px 10px;border-radius:20px;}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:0 12px 40px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.03);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-family:var(--grotesk);font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px;}
+.card-title i{color:var(--mint);font-size:17px;}
+.card-badge{font-size:11px;background:rgba(16,185,129,0.12);color:var(--mint);padding:4px 12px;border-radius:999px;font-family:var(--mono);border:1px solid var(--line);}
 
 /* CHANTIERS LIST */
-.chantier-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(10,26,16,0.4);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
-.chantier-item:hover{background:rgba(10,26,16,0.7);}
-.chantier-avatar{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.chantier-item{display:flex;align-items:center;gap:14px;padding:14px;background:rgba(4,18,10,0.4);border:1px solid transparent;border-radius:13px;margin-bottom:9px;cursor:pointer;transition:all .25s var(--ease);}
+.chantier-item:hover{background:rgba(16,185,129,0.05);border-color:var(--line);transform:translateX(3px);}
+.chantier-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(110,231,168,0.06));border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.chantier-avatar i{font-size:20px;color:var(--mint);}
 .chantier-info{flex:1;min-width:0;}
-.chantier-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chantier-sub{font-size:11px;color:var(--g4);margin-top:2px;}
+.chantier-name{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chantier-sub{font-size:11.5px;color:var(--text-3);margin-top:3px;}
 .chantier-right{text-align:right;flex-shrink:0;}
-.progress-bar{width:80px;height:5px;background:rgba(127,196,160,0.1);border-radius:3px;overflow:hidden;margin-bottom:4px;}
-.progress-fill-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--g2),var(--g3));}
-.progress-pct{font-size:11px;color:var(--g3);}
-
-/* STATUS BADGE */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:500;}
-.badge::before{content:'';width:5px;height:5px;border-radius:50%;}
-.badge-ok{background:rgba(74,144,101,0.12);color:var(--g3);}
-.badge-ok::before{background:var(--g3);}
-.badge-warn{background:rgba(196,122,0,0.12);color:var(--warn);}
-.badge-warn::before{background:var(--warn);}
-.badge-danger{background:rgba(184,50,50,0.12);color:var(--danger);}
-.badge-danger::before{background:var(--danger);}
+.progress-bar{width:90px;height:6px;background:rgba(110,231,168,0.08);border-radius:4px;overflow:hidden;margin-bottom:5px;}
+.progress-fill-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--emerald),var(--mint));box-shadow:0 0 8px rgba(16,185,129,0.5);transition:width 1s var(--ease);}
+.progress-pct{font-size:11.5px;color:var(--mint);font-family:var(--mono);}
 
 /* RAPPORTS */
-.rapport-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;margin-bottom:6px;background:rgba(10,26,16,0.3);}
-.rapport-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.rapport-icon.ok{background:rgba(74,144,101,0.12);}
-.rapport-icon.warn{background:rgba(196,122,0,0.12);}
-.rapport-icon.danger{background:rgba(184,50,50,0.12);}
+.rapport-item{display:flex;align-items:flex-start;gap:12px;padding:13px;border-radius:12px;margin-bottom:8px;background:rgba(4,18,10,0.35);border:1px solid transparent;transition:all .25s var(--ease);}
+.rapport-item:hover{border-color:var(--line);}
+.rapport-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rapport-icon i{font-size:17px;}
+.rapport-icon.ok{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);}
+.rapport-icon.ok i{color:var(--emerald);}
+.rapport-icon.warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);}
+.rapport-icon.warn i{color:var(--warn);}
+.rapport-icon.danger{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);}
+.rapport-icon.danger i{color:var(--danger);}
 .rapport-content{flex:1;min-width:0;}
-.rapport-title{font-size:12px;font-weight:500;}
-.rapport-sub{font-size:11px;color:var(--g4);margin-top:2px;line-height:1.4;}
-.rapport-time{font-size:10px;color:var(--g2);white-space:nowrap;flex-shrink:0;}
+.rapport-title{font-size:12.5px;font-weight:600;}
+.rapport-sub{font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.45;}
+.rapport-time{font-size:10.5px;color:var(--text-3);white-space:nowrap;flex-shrink:0;font-family:var(--mono);}
 
 /* SCORE RING */
 .score-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0;}
-.score-ring{position:relative;width:120px;height:120px;margin-bottom:12px;}
+.score-ring{position:relative;width:130px;height:130px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(16,185,129,0.25));}
 .score-ring svg{transform:rotate(-90deg);}
 .score-ring-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
-.score-ring-val .val{font-size:28px;font-weight:700;color:var(--g3);font-family:'Playfair Display',serif;}
-.score-ring-val .lbl{font-size:10px;color:var(--g4);}
-.score-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;}
-.score-detail{background:rgba(10,26,16,0.4);border-radius:8px;padding:10px;text-align:center;}
-.score-detail .sd-val{font-size:16px;font-weight:600;color:var(--g3);}
-.score-detail .sd-lbl{font-size:10px;color:var(--g4);margin-top:2px;}
+.score-ring-val .val{font-size:32px;font-weight:700;color:var(--mint);font-family:var(--grotesk);letter-spacing:-0.02em;}
+.score-ring-val .lbl{font-size:10px;color:var(--text-3);font-family:var(--mono);}
+.score-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;}
+.score-detail{background:rgba(4,18,10,0.4);border:1px solid var(--line);border-radius:11px;padding:12px;text-align:center;}
+.score-detail .sd-val{font-size:17px;font-weight:700;color:var(--mint);font-family:var(--grotesk);}
+.score-detail .sd-lbl{font-size:10px;color:var(--text-3);margin-top:3px;letter-spacing:0.5px;}
 
 /* ALERTES */
-.alerte-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;margin-bottom:6px;}
-.alerte-item.high{background:rgba(184,50,50,0.08);border-left:2px solid var(--danger);}
-.alerte-item.medium{background:rgba(196,122,0,0.08);border-left:2px solid var(--warn);}
-.alerte-item.low{background:rgba(74,144,101,0.08);border-left:2px solid var(--g3);}
-.alerte-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
-.alerte-title{font-size:12px;font-weight:500;}
-.alerte-sub{font-size:11px;color:var(--g4);margin-top:2px;}
+.alerte-item{display:flex;gap:11px;align-items:flex-start;padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid transparent;}
+.alerte-item.high{background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.2);border-left:3px solid var(--danger);}
+.alerte-item.medium{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.18);border-left:3px solid var(--warn);}
+.alerte-item.low{background:rgba(16,185,129,0.05);border-color:var(--line);border-left:3px solid var(--emerald);}
+.alerte-icon{flex-shrink:0;margin-top:1px;}
+.alerte-icon i{font-size:16px;}
+.alerte-item.high .alerte-icon i{color:var(--danger);}
+.alerte-item.medium .alerte-icon i{color:var(--warn);}
+.alerte-item.low .alerte-icon i{color:var(--mint);}
+.alerte-title{font-size:12.5px;font-weight:600;}
+.alerte-sub{font-size:11.5px;color:var(--text-2);margin-top:3px;}
+
+/* PANELS */
+.dpanel{display:none;}
+.dpanel.on{display:block;animation:panelIn .35s var(--ease) both;}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* GANTT */
+.gantt{overflow-x:auto;}
+.gtable{min-width:640px;border-collapse:collapse;width:100%;}
+.gtable th{font-size:11px;color:var(--text-3);font-weight:600;padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.gtable th.task{text-align:left;width:170px;}
+.gtable td{padding:12px 6px;border-bottom:1px solid rgba(110,231,168,0.05);}
+.gtable td.task{font-size:13.5px;font-weight:500;}
+.gcell{position:relative;height:14px;}
+.gbar{position:absolute;top:0;height:100%;border-radius:7px;}
+.gbar.plan{left:0;width:100%;background:rgba(110,231,168,0.08);}
+.gbar.done{background:linear-gradient(90deg,var(--emerald),var(--mint));box-shadow:0 0 10px rgba(16,185,129,0.35);}
+.gbar.real{background:linear-gradient(90deg,#2563eb,#60a5fa);box-shadow:0 0 10px rgba(59,130,246,0.35);}
+.gbar.late{background:linear-gradient(90deg,#dc2626,var(--danger));box-shadow:0 0 10px rgba(248,113,113,0.35);}
+.glegend{display:flex;gap:18px;margin-top:14px;font-size:12px;color:var(--text-2);flex-wrap:wrap;}
+.glegend .sq{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;}
+.dtable th{font-size:11px;color:var(--text-3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);}
+.dtable td{font-size:13.5px;padding:12px 10px;border-bottom:1px solid rgba(110,231,168,0.05);}
+.dtable td.num,.dtable th.num{text-align:right;font-family:var(--mono);}
+.dtable a{color:var(--mint);cursor:pointer;text-decoration:none;}
+.dtable .up{color:var(--emerald);}.dtable .dn{color:var(--danger);}
+.doc-badge{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px;letter-spacing:0.5px;}
+.doc-badge.b-plan{background:rgba(16,185,129,0.12);color:var(--mint);border:1px solid var(--line);}
+.doc-badge.b-bc{background:rgba(245,158,11,0.1);color:var(--warn);border:1px solid rgba(245,158,11,0.25);}
+.doc-badge.b-fac{background:rgba(96,165,250,0.1);color:#93c5fd;border:1px solid rgba(96,165,250,0.25);}
+.doc-badge.b-pho{background:rgba(167,243,208,0.08);color:#a7f3d0;border:1px solid var(--line);}
+.bar-wrap{height:7px;background:rgba(110,231,168,0.08);border-radius:4px;overflow:hidden;min-width:120px;}
+.bar-fill{height:100%;border-radius:4px;}
+.budget-note{color:var(--text-2);font-size:12.5px;margin-top:14px;display:flex;gap:8px;align-items:flex-start;}
+.budget-note i{color:var(--warn);flex-shrink:0;margin-top:1px;}
+
+/* EXPORT */
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.exp{background:rgba(4,18,10,0.4);border:1px solid var(--line);border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;transition:all .25s var(--ease);}
+.exp:hover{border-color:var(--line-strong);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
+.exp .ic{width:48px;height:48px;border-radius:13px;margin:0 auto 12px;background:linear-gradient(135deg,rgba(16,185,129,0.16),rgba(110,231,168,0.04));border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;}
+.exp .ic i{font-size:22px;color:var(--mint);}
+.exp .nm{font-family:var(--grotesk);font-size:15px;font-weight:600;}
+.exp .ds{font-size:12px;color:var(--text-2);margin-top:3px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--glass);border:1px solid var(--line-strong);padding:13px 22px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s var(--ease);pointer-events:none;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 20px rgba(16,185,129,0.1);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:700px){.exp-grid{grid-template-columns:1fr;}}
+
+/* USER MENU */
+.user-menu{position:absolute;top:48px;right:0;min-width:190px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line-strong);border-radius:13px;padding:6px;display:none;z-index:150;box-shadow:0 16px 50px rgba(0,0,0,0.45),0 0 24px rgba(16,185,129,0.08);}
+.user-menu.open{display:block;animation:panelIn .25s var(--ease) both;}
+.user-menu a{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:9px;font-size:13.5px;color:var(--text-2);text-decoration:none;transition:all .2s;}
+.user-menu a:hover{background:rgba(110,231,168,0.08);color:var(--text);}
+.user-menu a i{font-size:16px;color:var(--mint);}
 
 /* LOADING */
-.skeleton{background:linear-gradient(90deg,rgba(127,196,160,0.05) 25%,rgba(127,196,160,0.1) 50%,rgba(127,196,160,0.05) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+.skeleton{background:linear-gradient(90deg,rgba(110,231,168,0.04) 25%,rgba(110,231,168,0.1) 50%,rgba(110,231,168,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
 @keyframes shimmer{to{background-position:-200% 0}}
 .skeleton-line{height:14px;border-radius:4px;margin-bottom:8px;}
 .skeleton-line.w60{width:60%;}
 .skeleton-line.w80{width:80%;}
-.skeleton-line.w40{width:40%;}
 
 /* EMPTY STATE */
-.empty{text-align:center;padding:32px 16px;color:var(--g2);}
-.empty i{font-size:40px;margin-bottom:12px;display:block;}
+.empty{text-align:center;padding:36px 16px;color:var(--text-3);}
+.empty i{font-size:40px;margin-bottom:12px;display:block;opacity:0.5;}
 .empty p{font-size:13px;}
 
 /* API STATUS */
-.api-status{display:flex;align-items:center;gap:6px;font-size:11px;padding:4px 10px;border-radius:6px;}
-.api-status.ok{background:rgba(74,144,101,0.1);color:var(--g3);}
-.api-status.err{background:rgba(184,50,50,0.1);color:var(--danger);}
-.api-status.loading{background:rgba(127,196,160,0.05);color:var(--g4);}
+.api-status{display:flex;align-items:center;gap:7px;font-size:11px;padding:6px 12px;border-radius:999px;font-family:var(--mono);border:1px solid transparent;}
+.api-status.ok{background:rgba(16,185,129,0.08);color:var(--mint);border-color:var(--line);}
+.api-status.err{background:rgba(248,113,113,0.08);color:var(--danger);border-color:rgba(248,113,113,0.2);}
+.api-status.loading{background:rgba(110,231,168,0.04);color:var(--text-3);border-color:var(--line);}
 .api-dot{width:6px;height:6px;border-radius:50%;}
-.api-status.ok .api-dot{background:var(--g3);animation:pulse2 2s infinite;}
+.api-status.ok .api-dot{background:var(--mint);box-shadow:0 0 8px var(--mint);animation:pulse2 2s infinite;}
 .api-status.err .api-dot{background:var(--danger);}
-.api-status.loading .api-dot{background:var(--g4);}
+.api-status.loading .api-dot{background:var(--text-3);}
 @keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
 
-/* COMING SOON */
-.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center;color:var(--g4);}
-.coming-soon i{font-size:56px;color:var(--g2);margin-bottom:20px;}
-.coming-soon h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;}
-.coming-soon p{font-size:14px;color:var(--g4);max-width:400px;line-height:1.6;}
-
-.hamburger-btn{display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;}
 @media(max-width:900px){
-  .sidebar{transform:translateX(-100%);transition:transform .25s ease;width:260px;box-shadow:8px 0 24px rgba(0,0,0,0.4);}
-  .sidebar.open{transform:translateX(0);}
-  .main{margin-left:0;}
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:20px;}
   .stats-grid{grid-template-columns:1fr 1fr;}
   .grid-2{grid-template-columns:1fr;}
-  .hamburger-btn{display:flex;}
-  .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
-  .sidebar-backdrop.open{display:block;}
 }
 </style>
 </head>
 <body>
 
+<div class="orbs" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
 <!-- SIDEBAR -->
-<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">Bina<span>ty</span></div>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><i class="ti ti-building-skyscraper"></i></div><div>Bina<span>ty</span></div></div>
   <nav class="sidebar-nav">
-    <div class="nav-item active" onclick="showPage('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-    <div class="nav-item" onclick="showPage('chantiers')"><i class="ti ti-building-warehouse"></i> Chantiers</div>
-    <div class="nav-item" onclick="showPage('rapports')"><i class="ti ti-file-text"></i> Rapports</div>
-    <div class="nav-item" onclick="showPage('alertes')"><i class="ti ti-bell"></i> Alertes</div>
-    <div class="nav-item" onclick="showPage('paiements')"><i class="ti ti-cash"></i> Paiements</div>
-    <div class="nav-item" onclick="showPage('materiaux')"><i class="ti ti-packages"></i> Matériaux</div>
-    <div class="nav-item" onclick="showPage('equipes')"><i class="ti ti-users"></i> Équipes</div>
-    <div class="nav-item" onclick="showPage('stats')"><i class="ti ti-chart-bar"></i> Statistiques</div>
-    <div class="nav-item" onclick="showPage('parametres')"><i class="ti ti-settings"></i> Paramètres</div>
+    <a class="nav-item" href="index.html" style="text-decoration:none;color:var(--text-3);margin-bottom:10px;border-bottom:1px solid var(--line);border-radius:0;padding-bottom:14px;"><i class="ti ti-arrow-left"></i> Retour au site</a>
+    <div class="nav-item active" data-panel="dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" data-panel="rapports"><i class="ti ti-file-text"></i> Rapports</div>
+    <div class="nav-item" data-panel="alertes"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item" data-panel="paiements"><i class="ti ti-cash"></i> Paiements</div>
+    <div class="nav-item" data-panel="materiaux"><i class="ti ti-packages"></i> Matériaux</div>
+    <div class="nav-item" data-panel="planning"><i class="ti ti-calendar-time"></i> Planning</div>
+    <div class="nav-item" data-panel="documents"><i class="ti ti-folder"></i> Documents</div>
+    <div class="nav-item" data-panel="budget"><i class="ti ti-coin"></i> Budget</div>
+    <div class="nav-item" data-panel="export"><i class="ti ti-file-export"></i> Export compta</div>
+    <div class="nav-item"><i class="ti ti-users"></i> Équipes</div>
+    <div class="nav-item"><i class="ti ti-settings"></i> Paramètres</div>
   </nav>
   <div class="sidebar-footer">
     <div id="apiStatus" class="api-status loading"><div class="api-dot"></div> Connexion...</div>
@@ -200,476 +256,344 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
 <!-- MAIN -->
 <main class="main">
 
-  <!-- BANDEAU MODE DÉMO -->
-  <div style="background:rgba(74,144,101,0.12);border:0.5px solid rgba(127,196,160,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--g5);">
-      <i class="ti ti-eye" style="font-size:16px;color:var(--g3);"></i>
-      Vous explorez Binaty en mode démo — données d'exemple, aucun chantier réel n'est affiché.
-    </div>
-    <a href="inscription.html" style="text-decoration:none;flex-shrink:0;">
-      <button style="background:var(--g3);color:var(--white);border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;">Créer mon compte</button>
-    </a>
-  </div>
-
   <!-- TOPBAR -->
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu" style="font-size:20px;line-height:1;">☰</div>
-      <div id="backBtn" onclick="showPage('dashboard')" aria-label="Retour" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g1);border:0.5px solid rgba(127,196,160,0.15);align-items:center;justify-content:center;cursor:pointer;color:var(--g4);font-size:18px;flex-shrink:0;">←</div>
-      <div>
-        <div class="topbar-title" id="pageTitle">Tableau de bord</div>
-        <div style="font-size:12px;color:var(--g4);margin-top:2px;" id="lastUpdate">Chargement...</div>
-      </div>
+    <div>
+      <div class="topbar-title">Tableau de bord</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:3px;font-family:var(--mono);" id="lastUpdate">Chargement...</div>
     </div>
     <div class="topbar-right">
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <i class="ti ti-refresh"></i> Actualiser
       </button>
-      <div class="notif-btn" onclick="showPage('alertes')"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
-      <div class="avatar-wrap">
-        <div class="avatar" id="userAvatar" onclick="toggleAvatarMenu()">D</div>
-        <div class="avatar-dropdown" id="avatarDropdown">
-          <div class="avatar-dropdown-header">
-            <div class="avatar-dropdown-name" id="dropdownName">—</div>
-            <div class="avatar-dropdown-email" id="dropdownEmail">—</div>
-          </div>
-          <div class="avatar-dropdown-item" onclick="window.location.href='inscription.html'">
-            <i class="ti ti-user-plus"></i> Créer mon compte
-          </div>
-          <div class="avatar-dropdown-item danger" onclick="logout()">
-            <i class="ti ti-arrow-left"></i> Quitter la démo
-          </div>
+      <div class="notif-btn" onclick="openAlertes()" title="Voir les alertes"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
+      <div style="position:relative;">
+        <div class="avatar" onclick="toggleUserMenu(event)" style="cursor:pointer;">T</div>
+        <div class="user-menu" id="userMenu">
+          <a href="index.html"><i class="ti ti-world"></i> Retour au site</a>
+          <a href="index.html"><i class="ti ti-logout"></i> Déconnexion</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: DASHBOARD ═══ -->
-  <div id="page-dashboard" class="page-section active">
-    <div class="stats-grid">
-      <div class="stat-card" style="--accent:var(--g3)">
-        <div class="stat-icon"><i class="ti ti-building-warehouse"></i></div>
-        <div class="stat-val" id="statChantiers">--</div>
-        <div class="stat-lbl">Chantiers actifs</div>
-        <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendChantiers">--</span></div>
-      </div>
-      <div class="stat-card" style="--accent:var(--g4)">
-        <div class="stat-icon"><i class="ti ti-file-text"></i></div>
-        <div class="stat-val" id="statRapports">--</div>
-        <div class="stat-lbl">Rapports générés</div>
-        <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendRapports">--</span></div>
-      </div>
-      <div class="stat-card" style="--accent:var(--warn)">
-        <div class="stat-icon"><i class="ti ti-bell"></i></div>
-        <div class="stat-val" id="statAlertes">--</div>
-        <div class="stat-lbl">Alertes actives</div>
-        <div class="stat-trend" id="trendAlertes">--</div>
-      </div>
-      <div class="stat-card" style="--accent:var(--g5)">
-        <div class="stat-icon"><i class="ti ti-star"></i></div>
-        <div class="stat-val" id="statScore">--</div>
-        <div class="stat-lbl">Score moyen équipes</div>
-        <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
-      </div>
-    </div>
+  <div class="dpanel on" id="dpanel-dashboard">
 
-    <div class="card" style="margin-bottom:24px;">
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#6ee7a8">
+      <div class="stat-icon"><i class="ti ti-building-warehouse"></i></div>
+      <div class="stat-val" id="statChantiers">--</div>
+      <div class="stat-lbl">Chantiers actifs</div>
+      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendChantiers">--</span></div>
+    </div>
+    <div class="stat-card" style="--accent:#34d399">
+      <div class="stat-icon"><i class="ti ti-file-text"></i></div>
+      <div class="stat-val" id="statRapports">--</div>
+      <div class="stat-lbl">Rapports générés</div>
+      <div class="stat-trend"><i class="ti ti-trending-up"></i> <span id="trendRapports">--</span></div>
+    </div>
+    <div class="stat-card" style="--accent:#f59e0b">
+      <div class="stat-icon"><i class="ti ti-bell"></i></div>
+      <div class="stat-val" id="statAlertes">--</div>
+      <div class="stat-lbl">Alertes actives</div>
+      <div class="stat-trend" id="trendAlertes">--</div>
+    </div>
+    <div class="stat-card" style="--accent:#a7f3d0">
+      <div class="stat-icon"><i class="ti ti-star"></i></div>
+      <div class="stat-val" id="statScore">--</div>
+      <div class="stat-lbl">Score moyen équipes</div>
+      <div class="stat-trend"><i class="ti ti-shield-check"></i> <span id="trendScore">Vérifié IA</span></div>
+    </div>
+  </div>
+
+  <!-- GRID 2 COL -->
+  <div class="grid-2">
+
+    <!-- CHANTIERS -->
+    <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="ti ti-chart-line"></i> Évolution de l'avancement par chantier</div>
-        <span style="font-size:11px;color:var(--g4);">Estimation basée sur l'analyse photo IA</span>
+        <div class="card-title"><i class="ti ti-building-warehouse"></i> Mes chantiers</div>
+        <span class="card-badge" id="chantiersCount">--</span>
       </div>
-      <div style="position:relative;height:260px;">
-        <canvas id="progressChart"></canvas>
-      </div>
-      <div id="progressChartEmpty" style="display:none;text-align:center;padding:40px 0;color:var(--g4);font-size:13px;">
-        <i class="ti ti-photo" style="font-size:28px;display:block;margin-bottom:8px;"></i>
-        Pas encore assez de rapports photo pour tracer une évolution.
+      <div id="chantiersList">
+        <div class="skeleton skeleton-line w80"></div>
+        <div class="skeleton skeleton-line w60"></div>
+        <div class="skeleton skeleton-line w80"></div>
       </div>
     </div>
 
-    <div class="grid-2">
+    <!-- SCORE + ALERTES -->
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div class="card-title"><i class="ti ti-star"></i> Badge de qualité</div>
+        </div>
+        <div class="score-wrap">
+          <div class="score-ring">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(110,231,168,0.08)" stroke-width="10"/>
+              <circle cx="65" cy="65" r="55" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="345.6" id="scoreCircle" stroke-dashoffset="345.6" style="transition:stroke-dashoffset 1.2s cubic-bezier(0.16,1,0.3,1);"/>
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#10b981"/>
+                  <stop offset="100%" style="stop-color:#6ee7a8"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="score-ring-val">
+              <div class="val" id="scoreVal">--</div>
+              <div class="lbl">/ 10</div>
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">PONCTUALITÉ</div></div>
+            <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">QUALITÉ</div></div>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header">
-          <div class="card-title"><i class="ti ti-building-warehouse"></i> Mes chantiers</div>
-          <span class="card-badge" id="chantiersCount">--</span>
+          <div class="card-title"><i class="ti ti-bell"></i> Alertes récentes</div>
+          <span class="card-badge" id="alertesCount">--</span>
         </div>
-        <div id="chantiersList">
+        <div id="alertesList">
           <div class="skeleton skeleton-line w80"></div>
           <div class="skeleton skeleton-line w60"></div>
-          <div class="skeleton skeleton-line w80"></div>
-        </div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="ti ti-star"></i> Badge de qualité</div>
-          </div>
-          <div class="score-wrap">
-            <div class="score-ring">
-              <svg width="120" height="120" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(127,196,160,0.1)" stroke-width="10"/>
-                <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
-                  stroke-linecap="round" stroke-dasharray="314" id="scoreCircle" stroke-dashoffset="314"/>
-                <defs>
-                  <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#2d6b4a"/>
-                    <stop offset="100%" style="stop-color:#7fc4a0"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div class="score-ring-val">
-                <div class="val" id="scoreVal">--</div>
-                <div class="lbl">/ 10</div>
-              </div>
-            </div>
-            <div class="score-details">
-              <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">Ponctualité</div></div>
-              <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Qualité</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="ti ti-bell"></i> Alertes récentes</div>
-            <span class="card-badge" id="alertesCount">--</span>
-          </div>
-          <div id="alertesList">
-            <div class="skeleton skeleton-line w80"></div>
-            <div class="skeleton skeleton-line w60"></div>
-          </div>
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><i class="ti ti-file-text"></i> Rapports récents</div>
-        <span class="card-badge" id="rapportsCount">--</span>
-      </div>
-      <div id="rapportsList">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-        <div class="skeleton skeleton-line w80"></div>
-      </div>
+
+  </div>
+
+  <!-- RAPPORTS RÉCENTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="ti ti-file-text"></i> Rapports récents</div>
+      <span class="card-badge" id="rapportsCount">--</span>
+    </div>
+    <div id="rapportsList">
+      <div class="skeleton skeleton-line w80"></div>
+      <div class="skeleton skeleton-line w60"></div>
+      <div class="skeleton skeleton-line w80"></div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: CHANTIERS ═══ -->
-  <div id="page-chantiers" class="page-section">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title"><i class="ti ti-building-warehouse"></i> Tous les chantiers</div>
-        <span class="card-badge" id="chantiersCount2">--</span>
-      </div>
-      <div id="chantiersListFull">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
-    </div>
-  </div>
+  </div><!-- /dpanel-dashboard -->
 
-  <!-- ═══ PAGE: RAPPORTS ═══ -->
-  <div id="page-rapports" class="page-section">
+  <!-- RAPPORTS (page complète) -->
+  <div class="dpanel" id="dpanel-rapports">
     <div class="card">
       <div class="card-header">
         <div class="card-title"><i class="ti ti-file-text"></i> Tous les rapports</div>
         <span class="card-badge" id="rapportsCount2">--</span>
       </div>
-      <div id="rapportsListFull">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
+      <div id="rapportsListFull"></div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: ALERTES ═══ -->
-  <div id="page-alertes" class="page-section">
+  <!-- ALERTES (page complète) -->
+  <div class="dpanel" id="dpanel-alertes">
     <div class="card">
       <div class="card-header">
         <div class="card-title"><i class="ti ti-bell"></i> Toutes les alertes</div>
         <span class="card-badge" id="alertesCount2">--</span>
       </div>
-      <div id="alertesListFull">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
+      <div id="alertesListFull"></div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: PAIEMENTS ═══ -->
-  <div id="page-paiements" class="page-section">
+  <!-- PAIEMENTS -->
+  <div class="dpanel" id="dpanel-paiements">
     <div class="card">
       <div class="card-header">
         <div class="card-title"><i class="ti ti-cash"></i> Paiements enregistrés</div>
         <span class="card-badge" id="paiementsTotal">--</span>
       </div>
-      <p style="font-size:12.5px;color:var(--g4);margin:-6px 0 14px;">Chaque paiement annoncé par vos chefs sur WhatsApp ("khalast lmoualim 5000 dh") est détecté par l'IA, validé, puis archivé ici. Fini les comptes sur un coin de table.</p>
-      <div id="paiementsList">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
-      </div>
+      <p style="font-size:12.5px;color:var(--text-2);margin:-4px 0 16px;">Chaque paiement annoncé par vos chefs sur WhatsApp (« khalast lmoualim 5000 dh ») est détecté par l'IA, validé, puis archivé ici. Fini les comptes sur un coin de table.</p>
+      <div id="paiementsList"></div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: MATÉRIAUX ═══ -->
-  <div id="page-materiaux" class="page-section">
+  <!-- MATÉRIAUX -->
+  <div class="dpanel" id="dpanel-materiaux">
     <div class="card">
       <div class="card-header">
         <div class="card-title"><i class="ti ti-packages"></i> Registre matériaux</div>
         <span class="card-badge" id="materiauxCount">--</span>
       </div>
-      <p style="font-size:12.5px;color:var(--g4);margin:-6px 0 14px;">Livraisons et consommations détectées dans les rapports ("wslat 100 sac ciment"). Toute consommation sans livraison correspondante est signalée ⚠️ à vérifier.</p>
-      <div id="materiauxList">
-        <div class="skeleton skeleton-line w80"></div>
-        <div class="skeleton skeleton-line w60"></div>
+      <p style="font-size:12.5px;color:var(--text-2);margin:-4px 0 16px;">Livraisons et consommations détectées dans les rapports (« wslat 100 sac ciment »). Toute consommation sans livraison correspondante est signalée à vérifier.</p>
+      <div id="materiauxList"></div>
+    </div>
+  </div>
+
+  <!-- PLANNING -->
+  <div class="dpanel" id="dpanel-planning">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-calendar-time"></i> Planning — prévu vs réel</div>
+        <span class="card-badge" style="color:var(--warn);border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);">Toiture en retard</span>
+      </div>
+      <div class="gantt">
+        <table class="gtable">
+          <tr><th class="task">Tâche</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th><th>S7</th><th>S8</th></tr>
+          <tr><td class="task">Terrassement</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar done" style="left:0%;width:24%"></div></div></td></tr>
+          <tr><td class="task">Fondations</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar done" style="left:12%;width:26%"></div></div></td></tr>
+          <tr><td class="task">Gros œuvre</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar real" style="left:36%;width:30%"></div></div></td></tr>
+          <tr><td class="task">Toiture</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar late" style="left:62%;width:24%"></div></div></td></tr>
+          <tr><td class="task">Second œuvre</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar real" style="left:74%;width:20%"></div></div></td></tr>
+        </table>
+      </div>
+      <div class="glegend">
+        <span><i class="sq" style="background:rgba(110,231,168,0.15)"></i>Prévu</span>
+        <span><i class="sq" style="background:var(--emerald)"></i>Terminé</span>
+        <span><i class="sq" style="background:#60a5fa"></i>En cours</span>
+        <span><i class="sq" style="background:var(--danger)"></i>En retard</span>
       </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: EQUIPES ═══ -->
-  <div id="page-equipes" class="page-section">
-    <div class="coming-soon">
-      <i class="ti ti-users"></i>
-      <h2>Équipes</h2>
-      <p>La gestion des équipes et des profils professionnels arrive bientôt. Vous pourrez suivre la performance de chaque membre.</p>
+  <!-- DOCUMENTS -->
+  <div class="dpanel" id="dpanel-documents">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-folder"></i> Documents du chantier</div>
+        <button class="refresh-btn" onclick="toast('Ajout de document (démo)')"><i class="ti ti-plus"></i> Ajouter</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="dtable" style="min-width:560px;">
+          <tr><th>Nom</th><th>Type</th><th>Ajouté par</th><th>Date</th><th></th></tr>
+          <tr><td>Plan_masse_R+4.pdf</td><td><span class="doc-badge b-plan">Plan</span></td><td>Bureau d'études</td><td>12/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Plan_ferraillage_niv2.dwg</td><td><span class="doc-badge b-plan">Plan</span></td><td>Bureau d'études</td><td>20/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>BC_ciment_Holcim_0631.pdf</td><td><span class="doc-badge b-bc">Bon de commande</span></td><td>Conducteur travaux</td><td>28/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Facture_acier_Sonasid.pdf</td><td><span class="doc-badge b-fac">Facture</span></td><td>Promoteur</td><td>02/07/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Photo_coulage_dalle.jpg</td><td><span class="doc-badge b-pho">Photo GPS</span></td><td>Chef chantier</td><td>09/07/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: STATISTIQUES ═══ -->
-  <div id="page-stats" class="page-section">
-    <div class="coming-soon">
-      <i class="ti ti-chart-bar"></i>
-      <h2>Statistiques</h2>
-      <p>Les graphiques d'avancement, tendances et analyses détaillées de vos chantiers arrivent bientôt.</p>
+  <!-- BUDGET -->
+  <div class="dpanel" id="dpanel-budget">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-coin"></i> Suivi budgétaire — prévu vs réel</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="dtable" style="min-width:640px;">
+          <tr><th>Poste</th><th class="num">Prévu (MAD)</th><th class="num">Réel (MAD)</th><th class="num">Écart</th><th style="width:160px;">Consommation</th></tr>
+          <tr><td>Gros œuvre</td><td class="num">420 000</td><td class="num">398 500</td><td class="num up">-21 500</td><td><div class="bar-wrap"><div class="bar-fill" style="width:95%;background:linear-gradient(90deg,var(--emerald),var(--mint));"></div></div></td></tr>
+          <tr><td>Matériaux</td><td class="num">310 000</td><td class="num">342 000</td><td class="num dn">+32 000</td><td><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#dc2626,var(--danger));"></div></div></td></tr>
+          <tr><td>Main d'œuvre</td><td class="num">260 000</td><td class="num">245 000</td><td class="num up">-15 000</td><td><div class="bar-wrap"><div class="bar-fill" style="width:94%;background:linear-gradient(90deg,var(--emerald),var(--mint));"></div></div></td></tr>
+          <tr><td>Toiture</td><td class="num">140 000</td><td class="num">96 000</td><td class="num" style="color:var(--text-2);">en cours</td><td><div class="bar-wrap"><div class="bar-fill" style="width:69%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div></td></tr>
+          <tr style="font-weight:600;"><td>Total</td><td class="num">1 130 000</td><td class="num">1 081 500</td><td class="num up">-48 500</td><td><div class="bar-wrap"><div class="bar-fill" style="width:96%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div></td></tr>
+        </table>
+      </div>
+      <div class="budget-note"><i class="ti ti-alert-triangle"></i> Poste « Matériaux » en dépassement de 32 000 MAD — lié au report de livraison ciment du 09/07.</div>
     </div>
   </div>
 
-  <!-- ═══ PAGE: PARAMÈTRES ═══ -->
-  <div id="page-parametres" class="page-section">
-    <div class="coming-soon">
-      <i class="ti ti-settings"></i>
-      <h2>Paramètres</h2>
-      <p>La configuration de votre compte, notifications et préférences arrive bientôt.</p>
+  <!-- EXPORT COMPTA -->
+  <div class="dpanel" id="dpanel-export">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-file-export"></i> Export vers votre comptabilité</div>
+      </div>
+      <p style="color:var(--text-2);font-size:13.5px;margin-bottom:18px;">Exportez dépenses, factures et bons de commande du chantier au format de votre expert-comptable.</p>
+      <div class="exp-grid">
+        <div class="exp" onclick="toast('Export Excel généré (démo)')"><div class="ic"><i class="ti ti-file-spreadsheet"></i></div><div class="nm">Excel / CSV</div><div class="ds">Tableur standard</div></div>
+        <div class="exp" onclick="toast('Export Ciel généré (démo)')"><div class="ic"><i class="ti ti-book"></i></div><div class="nm">Ciel Compta</div><div class="ds">Format écritures</div></div>
+        <div class="exp" onclick="toast('Export Sage généré (démo)')"><div class="ic"><i class="ti ti-book-2"></i></div><div class="nm">Sage</div><div class="ds">Format écritures</div></div>
+      </div>
     </div>
   </div>
 
 </main>
+<div class="toast" id="toastBox"></div>
 
 <script>
-const API = 'https://buildra.onrender.com';
-const DEMO_MODE = true;
-const user = { nom: 'Mode Démo', email: 'demo@binaty.ma' };
+const API = 'https://demo.invalid'; // mode démo : aucun backend, fallback local systématique
 
-// ─── AVATAR / USER MENU ─────────────────────────────────
-function populateUserInfo() {
-  if(!user) return;
-  const initial = (user.nom || user.email || 'U').charAt(0).toUpperCase();
-  document.getElementById('userAvatar').textContent = initial;
-  document.getElementById('dropdownName').textContent = user.nom || 'Promoteur';
-  document.getElementById('dropdownEmail').textContent = user.email || '';
-}
-
-function toggleAvatarMenu() {
-  document.getElementById('avatarDropdown').classList.toggle('open');
-}
-
-document.addEventListener('click', function(e) {
-  const wrap = document.querySelector('.avatar-wrap');
-  if(wrap && !wrap.contains(e.target)) {
-    document.getElementById('avatarDropdown').classList.remove('open');
-  }
-});
-
-populateUserInfo();
-
-// ─── NAVIGATION ─────────────────────────────────────────
-const pageTitles = {
-  dashboard: 'Tableau de bord',
-  chantiers: 'Chantiers',
-  rapports: 'Rapports',
-  alertes: 'Alertes',
-  paiements: 'Paiements',
-  materiaux: 'Matériaux',
-  equipes: 'Équipes',
-  stats: 'Statistiques',
-  parametres: 'Paramètres'
-};
-
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarBackdrop').classList.toggle('open');
-}
-
-function closeSidebarIfMobile() {
-  if(window.innerWidth <= 900) {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebarBackdrop').classList.remove('open');
-  }
-}
-
-function showPage(page) {
-  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-  const section = document.getElementById('page-' + page);
-  if(section) section.classList.add('active');
-
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(n => {
-    if(n.getAttribute('onclick') === "showPage('" + page + "')") n.classList.add('active');
-  });
-
-  document.getElementById('pageTitle').textContent = pageTitles[page] || 'Tableau de bord';
-  document.getElementById('backBtn').style.display = (page === 'dashboard') ? 'none' : 'flex';
-
-  // Load full data for sub-pages
-  if(page === 'chantiers') loadChantiersFull();
-  if(page === 'rapports') loadRapportsFull();
-  if(page === 'alertes') loadAlertesFull();
-  if(page === 'paiements') loadPaiementsFull();
-  if(page === 'materiaux') loadMateriauxFull();
-
-  closeSidebarIfMobile();
-}
-
-// ─── LOGOUT (mode démo : retour à l'accueil) ────────────
-function logout() {
-  window.location.href = "index.html";
-}
-
-// ─── LOAD DATA ──────────────────────────────────────────
 async function loadData() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
-  setStatus('ok','Mode démo');
-  document.getElementById('lastUpdate').textContent = 'Mode démo — données d\'exemple';
+  setStatus('loading','Connexion...');
 
-  await new Promise(r => setTimeout(r, 350));
+  try {
+    const [statsRes, chantiersRes, rapportsRes, scoresRes, alertesRes] = await Promise.allSettled([
+      fetch(`${API}/api/stats`),
+      fetch(`${API}/api/chantiers`),
+      fetch(`${API}/api/rapports?limit=5`),
+      fetch(`${API}/api/scores`),
+      fetch(`${API}/api/alertes?limit=4`),
+    ]);
 
-  renderDemoStats();
-  renderDemoChantiers();
-  renderDemoRapports();
-  renderDemoScore();
-  renderDemoAlertes();
-  renderDemoProgressionChart();
+    setStatus('ok','Mode démo');
+    document.getElementById('lastUpdate').textContent = 'Mode démo — données d\'exemple';
+
+    // STATS
+    if(statsRes.status==='fulfilled' && statsRes.value.ok) {
+      const stats = await statsRes.value.json();
+      animCount('statChantiers', stats.chantiers_actifs || 0);
+      animCount('statRapports', stats.rapports_total || 0);
+      animCount('statAlertes', stats.alertes_actives || 0);
+      document.getElementById('trendChantiers').textContent = `${stats.chantiers_actifs || 0} en cours`;
+      document.getElementById('trendRapports').textContent = `${stats.rapports_aujourd_hui || 0} aujourd'hui`;
+      if(stats.alertes_actives > 0) {
+        document.getElementById('notifDot').style.display = 'block';
+        document.getElementById('trendAlertes').innerHTML = `<span style="color:var(--danger)">${stats.alertes_actives} non traitées</span>`;
+      }
+    } else {
+      renderDemoStats();
+    }
+
+    // CHANTIERS
+    if(chantiersRes.status==='fulfilled' && chantiersRes.value.ok) {
+      const data = await chantiersRes.value.json();
+      renderChantiers(data.chantiers || []);
+    } else {
+      renderDemoChantiers();
+    }
+
+    // RAPPORTS
+    if(rapportsRes.status==='fulfilled' && rapportsRes.value.ok) {
+      const data = await rapportsRes.value.json();
+      renderRapports(data.rapports || []);
+    } else {
+      renderDemoRapports();
+    }
+
+    // SCORES
+    if(scoresRes.status==='fulfilled' && scoresRes.value.ok) {
+      const data = await scoresRes.value.json();
+      renderScores(data.scores || []);
+    } else {
+      renderDemoScore();
+    }
+
+    // ALERTES
+    if(alertesRes.status==='fulfilled' && alertesRes.value.ok) {
+      const data = await alertesRes.value.json();
+      renderAlertes(data.alertes || []);
+    } else {
+      renderDemoAlertes();
+    }
+
+  } catch(e) {
+    setStatus('err','Hors ligne');
+    renderDemoStats();
+    renderDemoChantiers();
+    renderDemoRapports();
+    renderDemoScore();
+    renderDemoAlertes();
+    document.getElementById('lastUpdate').textContent = 'Mode démo — données exemple';
+  }
 
   btn.classList.remove('loading');
 }
 
-// ─── SUB-PAGE LOADERS ───────────────────────────────────
-async function loadChantiersFull() {
-  const chantiers = [
-    { nom: 'Résidence Al Manar', quartier: 'Malabata', chef_whatsapp: '+212 6 12 34 56 78', avancement_pct: 68 },
-    { nom: 'Immeuble Andalous', quartier: 'Iberia', chef_whatsapp: '+212 6 23 45 67 89', avancement_pct: 42 },
-    { nom: 'Villa Cap Spartel', quartier: 'Boukhalef', chef_whatsapp: '+212 6 34 56 78 90', avancement_pct: 91 },
-  ];
-  document.getElementById('chantiersCount2').textContent = chantiers.length + ' chantiers';
-  document.getElementById('chantiersListFull').innerHTML = chantiers.map(c => {
-    const pct = c.avancement_pct || 0;
-    return `<div class="chantier-item">
-      <div class="chantier-avatar">🏗️</div>
-      <div class="chantier-info">
-        <div class="chantier-name">${c.nom}</div>
-        <div class="chantier-sub">${c.quartier} • Chef: ${c.chef_whatsapp}</div>
-      </div>
-      <div class="chantier-right">
-        <div class="progress-bar"><div class="progress-fill-bar" style="width:${pct}%"></div></div>
-        <div class="progress-pct">${pct}%</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function loadRapportsFull() {
-  const rapports = [
-    { chantier_id: 'Résidence Al Manar', type: 'texte', resume_fr: 'Coulage de la dalle du 2ème étage terminé.', alerte: 'non', coherence: 'oui', heure: '09:14' },
-    { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Manque de fer à béton signalé, livraison attendue demain.', alerte: 'non', coherence: 'partiel', heure: '11:02' },
-    { chantier_id: 'Villa Cap Spartel', type: 'photo', resume_fr: 'Plâtrage du séjour terminé, photo confirmée par l\'IA.', alerte: 'non', coherence: 'oui', heure: '14:37' },
-    { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Absence d\'approvisionnement en eau sur le chantier aujourd\'hui.', alerte: 'oui', coherence: 'oui', heure: '16:50' },
-  ];
-  document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
-  document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
-    const isAlerte = r.alerte === 'oui';
-    const isCoh = r.coherence === 'oui';
-    const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
-    const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
-    return `<div class="rapport-item">
-      <div class="rapport-icon ${cls}">${icon}</div>
-      <div class="rapport-content">
-        <div class="rapport-title">${r.chantier_id} — ${r.type}</div>
-        <div class="rapport-sub">${r.resume_fr}</div>
-      </div>
-      <div class="rapport-time">${r.heure}</div>
-    </div>`;
-  }).join('');
-}
-
-async function loadAlertesFull() {
-  const alertes = [
-    { type: 'Approvisionnement', message: 'Manque d\'eau sur le chantier Immeuble Andalous', niveau: 'medium' },
-    { type: 'Matériaux', message: 'Fer à béton manquant — Immeuble Andalous', niveau: 'medium' },
-    { type: 'Retard', message: 'Ouvriers absents ce matin — Résidence Al Manar', niveau: 'low' },
-  ];
-  document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
-  document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
-    const level = a.niveau || 'low';
-    const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
-    return `<div class="alerte-item ${level}">
-      <div class="alerte-icon">${icon}</div>
-      <div>
-        <div class="alerte-title">${a.type}</div>
-        <div class="alerte-sub">${a.message}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function loadPaiementsFull() {
-  const paiements = [
-    { date: '2025-07-11', montant: 5000, devise: 'MAD', beneficiaire: 'Maalem Abdelkader', type: 'main_oeuvre', chantier: 'Résidence Al Manar' },
-    { date: '2025-07-10', montant: 12400, devise: 'MAD', beneficiaire: 'Fournisseur Drissi Matériaux', type: 'materiaux', chantier: 'Immeuble Andalous' },
-    { date: '2025-07-09', montant: 3200, devise: 'MAD', beneficiaire: 'Équipe plâtrage', type: 'main_oeuvre', chantier: 'Villa Cap Spartel' },
-    { date: '2025-07-08', montant: 1800, devise: 'MAD', beneficiaire: 'Transport gravier', type: 'autre', chantier: 'Résidence Al Manar' },
-  ];
-  const total = paiements.reduce((a,p) => a + p.montant, 0);
-  document.getElementById('paiementsTotal').textContent = total.toLocaleString('fr-FR') + ' MAD';
-  document.getElementById('paiementsList').innerHTML = paiements.map(p => {
-    const typeLbl = p.type === 'main_oeuvre' ? "Main d'œuvre" : p.type === 'materiaux' ? 'Matériaux' : 'Autre';
-    return `<div class="rapport-item">
-      <div class="rapport-icon ok">💰</div>
-      <div class="rapport-content">
-        <div class="rapport-title">${p.montant.toLocaleString('fr-FR')} ${p.devise} → ${p.beneficiaire}</div>
-        <div class="rapport-sub">${p.chantier} • ${typeLbl} • enregistré via WhatsApp, validé</div>
-      </div>
-      <div class="rapport-time">${p.date}</div>
-    </div>`;
-  }).join('');
-}
-
-async function loadMateriauxFull() {
-  const mouvements = [
-    { date: '2025-07-11', type: 'livraison', materiau: 'Ciment', quantite: 100, unite: 'sacs', chantier: 'Résidence Al Manar', flag: '' },
-    { date: '2025-07-11', type: 'consommation', materiau: 'Ciment', quantite: 40, unite: 'sacs', chantier: 'Résidence Al Manar', flag: '' },
-    { date: '2025-07-10', type: 'consommation', materiau: 'Fer à béton', quantite: 300, unite: 'kg', chantier: 'Immeuble Andalous', flag: '⚠️ à vérifier' },
-    { date: '2025-07-09', type: 'livraison', materiau: 'Sable', quantite: 3, unite: 'camions', chantier: 'Villa Cap Spartel', flag: '' },
-  ];
-  const aVerifier = mouvements.filter(m => m.flag).length;
-  document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ` • ${aVerifier} ⚠️` : '');
-  document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
-    const isLiv = m.type === 'livraison';
-    const cls = m.flag ? 'warn' : (isLiv ? 'ok' : '');
-    const icon = m.flag ? '⚠️' : (isLiv ? '📥' : '📤');
-    return `<div class="rapport-item">
-      <div class="rapport-icon ${cls}">${icon}</div>
-      <div class="rapport-content">
-        <div class="rapport-title">${isLiv ? 'Livraison' : 'Consommation'} — ${m.quantite} ${m.unite} ${m.materiau}</div>
-        <div class="rapport-sub">${m.chantier}${m.flag ? ' • consommation sans livraison correspondante — ' + m.flag : ''}</div>
-      </div>
-      <div class="rapport-time">${m.date}</div>
-    </div>`;
-  }).join('');
-}
-
-// ─── HELPERS ────────────────────────────────────────────
 function setStatus(type, text) {
   const el = document.getElementById('apiStatus');
   el.className = `api-status ${type}`;
@@ -694,7 +618,7 @@ function renderChantiers(chantiers) {
   el.innerHTML = chantiers.map(c => {
     const pct = c.avancement_pct || 0;
     return `<div class="chantier-item">
-      <div class="chantier-avatar">🏗️</div>
+      <div class="chantier-avatar"><i class="ti ti-crane"></i></div>
       <div class="chantier-info">
         <div class="chantier-name">${c.nom || 'Chantier'}</div>
         <div class="chantier-sub">${c.quartier || ''} • Chef: ${c.chef_whatsapp || '--'}</div>
@@ -715,9 +639,9 @@ function renderRapports(rapports) {
     const isAlerte = r.alerte === 'oui';
     const isCoh = r.coherence === 'oui';
     const cls = isAlerte ? 'danger' : isCoh ? 'ok' : 'warn';
-    const icon = isAlerte ? '🚨' : isCoh ? '✅' : '⚠️';
+    const icon = isAlerte ? 'ti-alert-octagon' : isCoh ? 'ti-circle-check' : 'ti-alert-triangle';
     return `<div class="rapport-item">
-      <div class="rapport-icon ${cls}">${icon}</div>
+      <div class="rapport-icon ${cls}"><i class="ti ${icon}"></i></div>
       <div class="rapport-content">
         <div class="rapport-title">${r.chantier_id || 'Chantier'} — ${r.type || 'Rapport'}</div>
         <div class="rapport-sub">${r.resume_fr || r.declaration || 'Rapport généré automatiquement'}</div>
@@ -743,9 +667,9 @@ function renderAlertes(alertes) {
   if(!alertes.length) { el.innerHTML = '<div class="empty"><i class="ti ti-bell"></i><p>Aucune alerte</p></div>'; return; }
   el.innerHTML = alertes.map(a => {
     const level = a.niveau || 'low';
-    const icon = level==='high' ? '🚨' : level==='medium' ? '⚠️' : 'ℹ️';
+    const icon = level==='high' ? 'ti-alert-octagon' : level==='medium' ? 'ti-alert-triangle' : 'ti-info-circle';
     return `<div class="alerte-item ${level}">
-      <div class="alerte-icon">${icon}</div>
+      <div class="alerte-icon"><i class="ti ${icon}"></i></div>
       <div>
         <div class="alerte-title">${a.type || 'Alerte'}</div>
         <div class="alerte-sub">${a.message || ''}</div>
@@ -757,10 +681,11 @@ function renderAlertes(alertes) {
 function updateScore(val) {
   document.getElementById('scoreVal').textContent = val;
   const pct = val / 10;
-  document.getElementById('scoreCircle').style.strokeDashoffset = 314 * (1 - pct);
+  const circumference = 345.6;
+  document.getElementById('scoreCircle').style.strokeDashoffset = circumference * (1 - pct);
 }
 
-// ─── DEMO DATA ──────────────────────────────────────────
+// DEMO DATA (quand l'API n'est pas disponible)
 function renderDemoStats() {
   animCount('statChantiers', 3);
   animCount('statRapports', 27);
@@ -776,7 +701,7 @@ function renderDemoChantiers() {
     {nom:'Villa Achakar', q:'Boukhalef', pct:45, chef:'+212 6XX'},
     {nom:'Immeuble Centre-ville', q:'Hay Sadik', pct:18, chef:'+212 6XX'},
   ].map(c => `<div class="chantier-item">
-    <div class="chantier-avatar">🏗️</div>
+    <div class="chantier-avatar"><i class="ti ti-crane"></i></div>
     <div class="chantier-info">
       <div class="chantier-name">${c.nom}</div>
       <div class="chantier-sub">${c.q} • Chef: ${c.chef}</div>
@@ -791,12 +716,12 @@ function renderDemoChantiers() {
 function renderDemoRapports() {
   document.getElementById('rapportsCount').textContent = '4 aujourd\'hui';
   document.getElementById('rapportsList').innerHTML = [
-    {cls:'ok', icon:'✅', titre:'Al Majd — Photo chantier', sub:'Avancement 72% confirmé. Coffrages au 3ème étage terminés.', t:'17:30'},
-    {cls:'warn', icon:'⚠️', titre:'Villa Achakar — Vocal darija', sub:'Chef signale retard livraison ciment. Délai estimé +3 jours.', t:'15:12'},
-    {cls:'ok', icon:'✅', titre:'Al Majd — Présence équipe', sub:'8 ouvriers présents sur site. GPS confirmé.', t:'09:05'},
-    {cls:'ok', icon:'✅', titre:'Immeuble Centre — Étape confirmée', sub:'Fondations validées par analyse photo.', t:'08:42'},
+    {cls:'ok', icon:'ti-circle-check', titre:'Al Majd — Photo chantier', sub:'Avancement 72% confirmé. Coffrages au 3ème étage terminés.', t:'17:30'},
+    {cls:'warn', icon:'ti-alert-triangle', titre:'Villa Achakar — Vocal darija', sub:'Chef signale retard livraison ciment. Délai estimé +3 jours.', t:'15:12'},
+    {cls:'ok', icon:'ti-circle-check', titre:'Al Majd — Présence équipe', sub:'8 ouvriers présents sur site. GPS confirmé.', t:'09:05'},
+    {cls:'ok', icon:'ti-circle-check', titre:'Immeuble Centre — Étape confirmée', sub:'Fondations validées par analyse photo.', t:'08:42'},
   ].map(r => `<div class="rapport-item">
-    <div class="rapport-icon ${r.cls}">${r.icon}</div>
+    <div class="rapport-icon ${r.cls}"><i class="ti ${r.icon}"></i></div>
     <div class="rapport-content">
       <div class="rapport-title">${r.titre}</div>
       <div class="rapport-sub">${r.sub}</div>
@@ -816,14 +741,14 @@ function renderDemoAlertes() {
   document.getElementById('alertesCount').textContent = '1';
   document.getElementById('alertesList').innerHTML = `
     <div class="alerte-item medium">
-      <div class="alerte-icon">⚠️</div>
+      <div class="alerte-icon"><i class="ti ti-alert-triangle"></i></div>
       <div>
         <div class="alerte-title">Retard signalé — Villa Achakar</div>
         <div class="alerte-sub">Livraison ciment reportée de 3 jours</div>
       </div>
     </div>
     <div class="alerte-item low">
-      <div class="alerte-icon">ℹ️</div>
+      <div class="alerte-icon"><i class="ti ti-info-circle"></i></div>
       <div>
         <div class="alerte-title">Rapport manquant — Centre-ville</div>
         <div class="alerte-sub">Aucun rapport reçu depuis 18h hier</div>
@@ -831,103 +756,133 @@ function renderDemoAlertes() {
     </div>`;
 }
 
-// ─── GRAPHE D'AVANCEMENT ────────────────────────────────
-let progressChartInstance = null;
-const PROGRESS_COLORS = ['#4a9065', '#7fc4a0', '#c47a00', '#b83232', '#2d6b4a'];
-
-function buildProgressChart(datasets) {
-  const canvas = document.getElementById('progressChart');
-  const emptyState = document.getElementById('progressChartEmpty');
-
-  if (!datasets.length) {
-    canvas.style.display = 'none';
-    emptyState.style.display = 'block';
-    return;
-  }
-  canvas.style.display = 'block';
-  emptyState.style.display = 'none';
-
-  if (progressChartInstance) {
-    progressChartInstance.destroy();
-  }
-
-  progressChartInstance = new Chart(canvas, {
-    type: 'line',
-    data: { datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'nearest', intersect: false },
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { color: '#b8d9c5', font: { family: 'DM Sans', size: 12 } }
-        },
-        tooltip: {
-          callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%` }
-        }
-      },
-      scales: {
-        x: {
-          type: 'time',
-          time: { unit: 'day', tooltipFormat: 'dd/MM/yyyy' },
-          ticks: { color: '#7fc4a0', font: { family: 'DM Sans', size: 11 } },
-          grid: { color: 'rgba(127,196,160,0.08)' }
-        },
-        y: {
-          min: 0, max: 100,
-          ticks: { color: '#7fc4a0', font: { family: 'DM Sans', size: 11 }, callback: (v) => v + '%' },
-          grid: { color: 'rgba(127,196,160,0.08)' }
-        }
-      }
-    }
+// Panels sidebar
+const panelTitles = {dashboard:'Tableau de bord', rapports:'Rapports', alertes:'Alertes', paiements:'Paiements', materiaux:'Matériaux', planning:'Planning', documents:'Documents', budget:'Budget', export:'Export compta'};
+document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.dpanel').forEach(p => p.classList.remove('on'));
+    item.classList.add('active');
+    const key = item.dataset.panel;
+    document.getElementById('dpanel-' + key).classList.add('on');
+    document.querySelector('.topbar-title').textContent = panelTitles[key];
+    document.getElementById('refreshBtn').style.display = key === 'dashboard' ? '' : 'none';
+    if (key === 'rapports') loadRapportsFull();
+    if (key === 'alertes') loadAlertesFull();
+    if (key === 'paiements') loadPaiementsFull();
+    if (key === 'materiaux') loadMateriauxFull();
   });
-}
+});
 
-function renderProgressionChart(progressionParChantier) {
-  const chantierIds = Object.keys(progressionParChantier);
-  const datasets = chantierIds.map((id, i) => {
-    const points = progressionParChantier[id].map(p => ({ x: p.date, y: p.pct }));
-    const color = PROGRESS_COLORS[i % PROGRESS_COLORS.length];
-    return {
-      label: id,
-      data: points,
-      borderColor: color,
-      backgroundColor: color + '22',
-      tension: 0.3,
-      fill: false,
-      pointRadius: 3,
-    };
-  }).filter(ds => ds.data.length > 0);
-
-  buildProgressChart(datasets);
-}
-
-function renderDemoProgressionChart() {
-  const today = new Date();
-  const dayMs = 24 * 60 * 60 * 1000;
-  const fmt = (offset) => new Date(today - offset * dayMs).toISOString().slice(0, 10);
-
-  const datasets = [
-    {
-      label: 'Résidence Al Manar',
-      data: [fmt(20), fmt(14), fmt(7), fmt(2)].map((d, i) => ({ x: d, y: [35, 48, 60, 68][i] })),
-      borderColor: PROGRESS_COLORS[0], backgroundColor: PROGRESS_COLORS[0] + '22',
-      tension: 0.3, fill: false, pointRadius: 3,
-    },
-    {
-      label: 'Immeuble Andalous',
-      data: [fmt(18), fmt(12), fmt(6), fmt(1)].map((d, i) => ({ x: d, y: [20, 28, 35, 42][i] })),
-      borderColor: PROGRESS_COLORS[1], backgroundColor: PROGRESS_COLORS[1] + '22',
-      tension: 0.3, fill: false, pointRadius: 3,
-    },
+// ── Pages complètes (données démo, portées de demo.html) ──
+function loadRapportsFull() {
+  const rapports = [
+    { chantier: 'Résidence Al Manar', type: 'texte', resume: 'Coulage de la dalle du 2ème étage terminé.', alerte: false, ok: true, heure: '09:14' },
+    { chantier: 'Immeuble Andalous', type: 'texte', resume: 'Manque de fer à béton signalé, livraison attendue demain.', alerte: false, ok: false, heure: '11:02' },
+    { chantier: 'Villa Cap Spartel', type: 'photo', resume: "Plâtrage du séjour terminé, photo confirmée par l'IA.", alerte: false, ok: true, heure: '14:37' },
+    { chantier: 'Immeuble Andalous', type: 'texte', resume: "Absence d'approvisionnement en eau sur le chantier aujourd'hui.", alerte: true, ok: true, heure: '16:50' },
   ];
-  buildProgressChart(datasets);
+  document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
+  document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
+    const cls = r.alerte ? 'danger' : r.ok ? 'ok' : 'warn';
+    const icon = r.alerte ? 'ti-alert-octagon' : r.ok ? 'ti-circle-check' : 'ti-alert-triangle';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${cls}"><i class="ti ${icon}"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${r.chantier} — ${r.type}</div>
+        <div class="rapport-sub">${r.resume}</div>
+      </div>
+      <div class="rapport-time">${r.heure}</div>
+    </div>`;
+  }).join('');
 }
 
-// ─── INIT ───────────────────────────────────────────────
+function loadAlertesFull() {
+  const alertes = [
+    { type: 'Approvisionnement', message: "Manque d'eau sur le chantier Immeuble Andalous", niveau: 'medium' },
+    { type: 'Matériaux', message: 'Fer à béton manquant — Immeuble Andalous', niveau: 'medium' },
+    { type: 'Retard', message: 'Ouvriers absents ce matin — Résidence Al Manar', niveau: 'low' },
+  ];
+  document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
+  document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
+    const icon = a.niveau === 'high' ? 'ti-alert-octagon' : a.niveau === 'medium' ? 'ti-alert-triangle' : 'ti-info-circle';
+    return `<div class="alerte-item ${a.niveau}">
+      <div class="alerte-icon"><i class="ti ${icon}"></i></div>
+      <div>
+        <div class="alerte-title">${a.type}</div>
+        <div class="alerte-sub">${a.message}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadPaiementsFull() {
+  const paiements = [
+    { date: '2025-07-11', montant: 5000, beneficiaire: 'Maalem Abdelkader', type: "Main d'œuvre", chantier: 'Résidence Al Manar' },
+    { date: '2025-07-10', montant: 12400, beneficiaire: 'Fournisseur Drissi Matériaux', type: 'Matériaux', chantier: 'Immeuble Andalous' },
+    { date: '2025-07-09', montant: 3200, beneficiaire: 'Équipe plâtrage', type: "Main d'œuvre", chantier: 'Villa Cap Spartel' },
+    { date: '2025-07-08', montant: 1800, beneficiaire: 'Transport gravier', type: 'Autre', chantier: 'Résidence Al Manar' },
+  ];
+  const total = paiements.reduce((a, p) => a + p.montant, 0);
+  document.getElementById('paiementsTotal').textContent = total.toLocaleString('fr-FR') + ' MAD';
+  document.getElementById('paiementsList').innerHTML = paiements.map(p => `<div class="rapport-item">
+      <div class="rapport-icon ok"><i class="ti ti-cash"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${p.montant.toLocaleString('fr-FR')} MAD → ${p.beneficiaire}</div>
+        <div class="rapport-sub">${p.chantier} • ${p.type} • enregistré via WhatsApp, validé</div>
+      </div>
+      <div class="rapport-time">${p.date}</div>
+    </div>`).join('');
+}
+
+function loadMateriauxFull() {
+  const mouvements = [
+    { date: '2025-07-11', livraison: true, materiau: 'Ciment', quantite: '100 sacs', chantier: 'Résidence Al Manar', flag: false },
+    { date: '2025-07-11', livraison: false, materiau: 'Ciment', quantite: '40 sacs', chantier: 'Résidence Al Manar', flag: false },
+    { date: '2025-07-10', livraison: false, materiau: 'Fer à béton', quantite: '300 kg', chantier: 'Immeuble Andalous', flag: true },
+    { date: '2025-07-09', livraison: true, materiau: 'Sable', quantite: '3 camions', chantier: 'Villa Cap Spartel', flag: false },
+  ];
+  const aVerifier = mouvements.filter(m => m.flag).length;
+  document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ' • ' + aVerifier + ' à vérifier' : '');
+  document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
+    const cls = m.flag ? 'warn' : m.livraison ? 'ok' : 'danger';
+    const icon = m.flag ? 'ti-alert-triangle' : m.livraison ? 'ti-package-import' : 'ti-package-export';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${m.flag ? 'warn' : m.livraison ? 'ok' : 'warn'}"><i class="ti ${icon}"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${m.livraison ? 'Livraison' : 'Consommation'} — ${m.quantite} ${m.materiau}</div>
+        <div class="rapport-sub">${m.chantier}${m.flag ? ' • consommation sans livraison correspondante — à vérifier' : ''}</div>
+      </div>
+      <div class="rapport-time">${m.date}</div>
+    </div>`;
+  }).join('');
+}
+
+function openAlertes() {
+  const item = document.querySelector('[data-panel="alertes"]');
+  if (item) item.click();
+}
+
+function toggleUserMenu(e) {
+  e.stopPropagation();
+  document.getElementById('userMenu').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  const m = document.getElementById('userMenu');
+  if (m) m.classList.remove('open');
+});
+
+function toast(msg) {
+  const t = document.getElementById('toastBox');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Init
 loadData();
-setInterval(loadData, 60000);
+setInterval(loadData, 60000); // Auto refresh toutes les 60s
 </script>
 
 </body>

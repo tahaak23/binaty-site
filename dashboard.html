@@ -185,6 +185,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(max-width:700px){.exp-grid{grid-template-columns:1fr;}}
 
+/* USER MENU */
+.user-menu{position:absolute;top:48px;right:0;min-width:190px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line-strong);border-radius:13px;padding:6px;display:none;z-index:150;box-shadow:0 16px 50px rgba(0,0,0,0.45),0 0 24px rgba(16,185,129,0.08);}
+.user-menu.open{display:block;animation:panelIn .25s var(--ease) both;}
+.user-menu a{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:9px;font-size:13.5px;color:var(--text-2);text-decoration:none;transition:all .2s;}
+.user-menu a:hover{background:rgba(110,231,168,0.08);color:var(--text);}
+.user-menu a i{font-size:16px;color:var(--mint);}
+
 /* LOADING */
 .skeleton{background:linear-gradient(90deg,rgba(110,231,168,0.04) 25%,rgba(110,231,168,0.1) 50%,rgba(110,231,168,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
 @keyframes shimmer{to{background-position:-200% 0}}
@@ -228,6 +235,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   <div class="sidebar-logo">
     <div class="logo-mark"><i class="ti ti-building-skyscraper"></i></div><div>Bina<span>ty</span></div></div>
   <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html" style="text-decoration:none;color:var(--text-3);margin-bottom:10px;border-bottom:1px solid var(--line);border-radius:0;padding-bottom:14px;"><i class="ti ti-arrow-left"></i> Retour au site</a>
     <div class="nav-item active" data-panel="dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
     <div class="nav-item" data-panel="rapports"><i class="ti ti-file-text"></i> Rapports</div>
     <div class="nav-item" data-panel="alertes"><i class="ti ti-bell"></i> Alertes</div>
@@ -258,8 +266,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <i class="ti ti-refresh"></i> Actualiser
       </button>
-      <div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
-      <div class="avatar">T</div>
+      <div class="notif-btn" onclick="openAlertes()" title="Voir les alertes"><i class="ti ti-bell"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
+      <div style="position:relative;">
+        <div class="avatar" onclick="toggleUserMenu(event)" style="cursor:pointer;">T</div>
+        <div class="user-menu" id="userMenu">
+          <a href="index.html"><i class="ti ti-world"></i> Retour au site</a>
+          <a href="index.html"><i class="ti ti-logout"></i> Déconnexion</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -843,6 +857,20 @@ function loadMateriauxFull() {
     </div>`;
   }).join('');
 }
+
+function openAlertes() {
+  const item = document.querySelector('[data-panel="alertes"]');
+  if (item) item.click();
+}
+
+function toggleUserMenu(e) {
+  e.stopPropagation();
+  document.getElementById('userMenu').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  const m = document.getElementById('userMenu');
+  if (m) m.classList.remove('open');
+});
 
 function toast(msg) {
   const t = document.getElementById('toastBox');
