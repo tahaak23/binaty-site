@@ -135,6 +135,56 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 .alerte-title{font-size:12.5px;font-weight:600;}
 .alerte-sub{font-size:11.5px;color:var(--text-2);margin-top:3px;}
 
+/* PANELS */
+.dpanel{display:none;}
+.dpanel.on{display:block;animation:panelIn .35s var(--ease) both;}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* GANTT */
+.gantt{overflow-x:auto;}
+.gtable{min-width:640px;border-collapse:collapse;width:100%;}
+.gtable th{font-size:11px;color:var(--text-3);font-weight:600;padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.gtable th.task{text-align:left;width:170px;}
+.gtable td{padding:12px 6px;border-bottom:1px solid rgba(110,231,168,0.05);}
+.gtable td.task{font-size:13.5px;font-weight:500;}
+.gcell{position:relative;height:14px;}
+.gbar{position:absolute;top:0;height:100%;border-radius:7px;}
+.gbar.plan{left:0;width:100%;background:rgba(110,231,168,0.08);}
+.gbar.done{background:linear-gradient(90deg,var(--emerald),var(--mint));box-shadow:0 0 10px rgba(16,185,129,0.35);}
+.gbar.real{background:linear-gradient(90deg,#2563eb,#60a5fa);box-shadow:0 0 10px rgba(59,130,246,0.35);}
+.gbar.late{background:linear-gradient(90deg,#dc2626,var(--danger));box-shadow:0 0 10px rgba(248,113,113,0.35);}
+.glegend{display:flex;gap:18px;margin-top:14px;font-size:12px;color:var(--text-2);flex-wrap:wrap;}
+.glegend .sq{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;}
+.dtable th{font-size:11px;color:var(--text-3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);}
+.dtable td{font-size:13.5px;padding:12px 10px;border-bottom:1px solid rgba(110,231,168,0.05);}
+.dtable td.num,.dtable th.num{text-align:right;font-family:var(--mono);}
+.dtable a{color:var(--mint);cursor:pointer;text-decoration:none;}
+.dtable .up{color:var(--emerald);}.dtable .dn{color:var(--danger);}
+.doc-badge{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px;letter-spacing:0.5px;}
+.doc-badge.b-plan{background:rgba(16,185,129,0.12);color:var(--mint);border:1px solid var(--line);}
+.doc-badge.b-bc{background:rgba(245,158,11,0.1);color:var(--warn);border:1px solid rgba(245,158,11,0.25);}
+.doc-badge.b-fac{background:rgba(96,165,250,0.1);color:#93c5fd;border:1px solid rgba(96,165,250,0.25);}
+.doc-badge.b-pho{background:rgba(167,243,208,0.08);color:#a7f3d0;border:1px solid var(--line);}
+.bar-wrap{height:7px;background:rgba(110,231,168,0.08);border-radius:4px;overflow:hidden;min-width:120px;}
+.bar-fill{height:100%;border-radius:4px;}
+.budget-note{color:var(--text-2);font-size:12.5px;margin-top:14px;display:flex;gap:8px;align-items:flex-start;}
+.budget-note i{color:var(--warn);flex-shrink:0;margin-top:1px;}
+
+/* EXPORT */
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.exp{background:rgba(4,18,10,0.4);border:1px solid var(--line);border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;transition:all .25s var(--ease);}
+.exp:hover{border-color:var(--line-strong);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
+.exp .ic{width:48px;height:48px;border-radius:13px;margin:0 auto 12px;background:linear-gradient(135deg,rgba(16,185,129,0.16),rgba(110,231,168,0.04));border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;}
+.exp .ic i{font-size:22px;color:var(--mint);}
+.exp .nm{font-family:var(--grotesk);font-size:15px;font-weight:600;}
+.exp .ds{font-size:12px;color:var(--text-2);margin-top:3px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--glass);border:1px solid var(--line-strong);padding:13px 22px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s var(--ease);pointer-events:none;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 20px rgba(16,185,129,0.1);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:700px){.exp-grid{grid-template-columns:1fr;}}
+
 /* LOADING */
 .skeleton{background:linear-gradient(90deg,rgba(110,231,168,0.04) 25%,rgba(110,231,168,0.1) 50%,rgba(110,231,168,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
 @keyframes shimmer{to{background-position:-200% 0}}
@@ -178,12 +228,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   <div class="sidebar-logo">
     <div class="logo-mark"><i class="ti ti-building-skyscraper"></i></div><div>Bina<span>ty</span></div></div>
   <nav class="sidebar-nav">
-    <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-    <div class="nav-item"><i class="ti ti-building-warehouse"></i> Chantiers</div>
-    <div class="nav-item"><i class="ti ti-file-text"></i> Rapports</div>
-    <div class="nav-item"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item active" data-panel="dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" data-panel="planning"><i class="ti ti-calendar-time"></i> Planning</div>
+    <div class="nav-item" data-panel="documents"><i class="ti ti-folder"></i> Documents</div>
+    <div class="nav-item" data-panel="budget"><i class="ti ti-coin"></i> Budget</div>
+    <div class="nav-item" data-panel="export"><i class="ti ti-file-export"></i> Export compta</div>
     <div class="nav-item"><i class="ti ti-users"></i> Équipes</div>
-    <div class="nav-item"><i class="ti ti-chart-bar"></i> Statistiques</div>
     <div class="nav-item"><i class="ti ti-settings"></i> Paramètres</div>
   </nav>
   <div class="sidebar-footer">
@@ -208,6 +258,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <div class="avatar">T</div>
     </div>
   </div>
+
+  <div class="dpanel on" id="dpanel-dashboard">
 
   <!-- STATS -->
   <div class="stats-grid">
@@ -311,7 +363,91 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     </div>
   </div>
 
+  </div><!-- /dpanel-dashboard -->
+
+  <!-- PLANNING -->
+  <div class="dpanel" id="dpanel-planning">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-calendar-time"></i> Planning — prévu vs réel</div>
+        <span class="card-badge" style="color:var(--warn);border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);">Toiture en retard</span>
+      </div>
+      <div class="gantt">
+        <table class="gtable">
+          <tr><th class="task">Tâche</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th><th>S7</th><th>S8</th></tr>
+          <tr><td class="task">Terrassement</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar done" style="left:0%;width:24%"></div></div></td></tr>
+          <tr><td class="task">Fondations</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar done" style="left:12%;width:26%"></div></div></td></tr>
+          <tr><td class="task">Gros œuvre</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar real" style="left:36%;width:30%"></div></div></td></tr>
+          <tr><td class="task">Toiture</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar late" style="left:62%;width:24%"></div></div></td></tr>
+          <tr><td class="task">Second œuvre</td><td colspan="8"><div class="gcell"><div class="gbar plan"></div><div class="gbar real" style="left:74%;width:20%"></div></div></td></tr>
+        </table>
+      </div>
+      <div class="glegend">
+        <span><i class="sq" style="background:rgba(110,231,168,0.15)"></i>Prévu</span>
+        <span><i class="sq" style="background:var(--emerald)"></i>Terminé</span>
+        <span><i class="sq" style="background:#60a5fa"></i>En cours</span>
+        <span><i class="sq" style="background:var(--danger)"></i>En retard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div class="dpanel" id="dpanel-documents">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-folder"></i> Documents du chantier</div>
+        <button class="refresh-btn" onclick="toast('Ajout de document (démo)')"><i class="ti ti-plus"></i> Ajouter</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="dtable" style="min-width:560px;">
+          <tr><th>Nom</th><th>Type</th><th>Ajouté par</th><th>Date</th><th></th></tr>
+          <tr><td>Plan_masse_R+4.pdf</td><td><span class="doc-badge b-plan">Plan</span></td><td>Bureau d'études</td><td>12/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Plan_ferraillage_niv2.dwg</td><td><span class="doc-badge b-plan">Plan</span></td><td>Bureau d'études</td><td>20/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>BC_ciment_Holcim_0631.pdf</td><td><span class="doc-badge b-bc">Bon de commande</span></td><td>Conducteur travaux</td><td>28/06/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Facture_acier_Sonasid.pdf</td><td><span class="doc-badge b-fac">Facture</span></td><td>Promoteur</td><td>02/07/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+          <tr><td>Photo_coulage_dalle.jpg</td><td><span class="doc-badge b-pho">Photo GPS</span></td><td>Chef chantier</td><td>09/07/2026</td><td><a onclick="toast('Ouverture (démo)')">Ouvrir</a></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="dpanel" id="dpanel-budget">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-coin"></i> Suivi budgétaire — prévu vs réel</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="dtable" style="min-width:640px;">
+          <tr><th>Poste</th><th class="num">Prévu (MAD)</th><th class="num">Réel (MAD)</th><th class="num">Écart</th><th style="width:160px;">Consommation</th></tr>
+          <tr><td>Gros œuvre</td><td class="num">420 000</td><td class="num">398 500</td><td class="num up">-21 500</td><td><div class="bar-wrap"><div class="bar-fill" style="width:95%;background:linear-gradient(90deg,var(--emerald),var(--mint));"></div></div></td></tr>
+          <tr><td>Matériaux</td><td class="num">310 000</td><td class="num">342 000</td><td class="num dn">+32 000</td><td><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#dc2626,var(--danger));"></div></div></td></tr>
+          <tr><td>Main d'œuvre</td><td class="num">260 000</td><td class="num">245 000</td><td class="num up">-15 000</td><td><div class="bar-wrap"><div class="bar-fill" style="width:94%;background:linear-gradient(90deg,var(--emerald),var(--mint));"></div></div></td></tr>
+          <tr><td>Toiture</td><td class="num">140 000</td><td class="num">96 000</td><td class="num" style="color:var(--text-2);">en cours</td><td><div class="bar-wrap"><div class="bar-fill" style="width:69%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div></td></tr>
+          <tr style="font-weight:600;"><td>Total</td><td class="num">1 130 000</td><td class="num">1 081 500</td><td class="num up">-48 500</td><td><div class="bar-wrap"><div class="bar-fill" style="width:96%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div></td></tr>
+        </table>
+      </div>
+      <div class="budget-note"><i class="ti ti-alert-triangle"></i> Poste « Matériaux » en dépassement de 32 000 MAD — lié au report de livraison ciment du 09/07.</div>
+    </div>
+  </div>
+
+  <!-- EXPORT COMPTA -->
+  <div class="dpanel" id="dpanel-export">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-file-export"></i> Export vers votre comptabilité</div>
+      </div>
+      <p style="color:var(--text-2);font-size:13.5px;margin-bottom:18px;">Exportez dépenses, factures et bons de commande du chantier au format de votre expert-comptable.</p>
+      <div class="exp-grid">
+        <div class="exp" onclick="toast('Export Excel généré (démo)')"><div class="ic"><i class="ti ti-file-spreadsheet"></i></div><div class="nm">Excel / CSV</div><div class="ds">Tableur standard</div></div>
+        <div class="exp" onclick="toast('Export Ciel généré (démo)')"><div class="ic"><i class="ti ti-book"></i></div><div class="nm">Ciel Compta</div><div class="ds">Format écritures</div></div>
+        <div class="exp" onclick="toast('Export Sage généré (démo)')"><div class="ic"><i class="ti ti-book-2"></i></div><div class="nm">Sage</div><div class="ds">Format écritures</div></div>
+      </div>
+    </div>
+  </div>
+
 </main>
+<div class="toast" id="toastBox"></div>
 
 <script>
 const API = 'https://buildra.onrender.com';
@@ -554,6 +690,28 @@ function renderDemoAlertes() {
         <div class="alerte-sub">Aucun rapport reçu depuis 18h hier</div>
       </div>
     </div>`;
+}
+
+// Panels sidebar
+const panelTitles = {dashboard:'Tableau de bord', planning:'Planning', documents:'Documents', budget:'Budget', export:'Export compta'};
+document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.dpanel').forEach(p => p.classList.remove('on'));
+    item.classList.add('active');
+    const key = item.dataset.panel;
+    document.getElementById('dpanel-' + key).classList.add('on');
+    document.querySelector('.topbar-title').textContent = panelTitles[key];
+    document.getElementById('refreshBtn').style.display = key === 'dashboard' ? '' : 'none';
+  });
+});
+
+function toast(msg) {
+  const t = document.getElementById('toastBox');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 // Init
