@@ -257,7 +257,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     <div>
       <div class="card" style="margin-bottom:16px;">
         <div class="card-header">
-          <div class="card-title"><i class="ti ti-star"></i> Score fiabilité</div>
+          <div class="card-title"><i class="ti ti-star"></i> Badge de qualité</div>
         </div>
         <div class="score-wrap">
           <div class="score-ring">
@@ -279,7 +279,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
           </div>
           <div class="score-details">
             <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">PONCTUALITÉ</div></div>
-            <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">COHÉRENCE</div></div>
+            <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">QUALITÉ</div></div>
           </div>
         </div>
       </div>
@@ -519,7 +519,7 @@ function renderDemoRapports() {
     {cls:'ok', icon:'ti-circle-check', titre:'Al Majd — Photo chantier', sub:'Avancement 72% confirmé. Coffrages au 3ème étage terminés.', t:'17:30'},
     {cls:'warn', icon:'ti-alert-triangle', titre:'Villa Achakar — Vocal darija', sub:'Chef signale retard livraison ciment. Délai estimé +3 jours.', t:'15:12'},
     {cls:'ok', icon:'ti-circle-check', titre:'Al Majd — Présence équipe', sub:'8 ouvriers présents sur site. GPS confirmé.', t:'09:05'},
-    {cls:'danger', icon:'ti-alert-octagon', titre:'Immeuble Centre — Incohérence', sub:'Déclaration non confirmée par photo. Vérification requise.', t:'08:42'},
+    {cls:'ok', icon:'ti-circle-check', titre:'Immeuble Centre — Étape confirmée', sub:'Fondations validées par analyse photo.', t:'08:42'},
   ].map(r => `<div class="rapport-item">
     <div class="rapport-icon ${r.cls}"><i class="ti ${r.icon}"></i></div>
     <div class="rapport-content">

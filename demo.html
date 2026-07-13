@@ -302,7 +302,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
       <div>
         <div class="card">
           <div class="card-header">
-            <div class="card-title"><i class="ti ti-star"></i> Score fiabilité</div>
+            <div class="card-title"><i class="ti ti-star"></i> Badge de qualité</div>
           </div>
           <div class="score-wrap">
             <div class="score-ring">
@@ -324,7 +324,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
             </div>
             <div class="score-details">
               <div class="score-detail"><div class="sd-val" id="scorePonctualite">--</div><div class="sd-lbl">Ponctualité</div></div>
-              <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Cohérence</div></div>
+              <div class="score-detail"><div class="sd-val" id="scoreCoherence">--</div><div class="sd-lbl">Qualité</div></div>
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--white);di
   <div id="page-paiements" class="page-section">
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="ti ti-cash"></i> Paiements déclarés</div>
+        <div class="card-title"><i class="ti ti-cash"></i> Paiements enregistrés</div>
         <span class="card-badge" id="paiementsTotal">--</span>
       </div>
       <p style="font-size:12.5px;color:var(--g4);margin:-6px 0 14px;">Chaque paiement annoncé par vos chefs sur WhatsApp ("khalast lmoualim 5000 dh") est détecté par l'IA, validé, puis archivé ici. Fini les comptes sur un coin de table.</p>
@@ -583,7 +583,7 @@ async function loadRapportsFull() {
   const rapports = [
     { chantier_id: 'Résidence Al Manar', type: 'texte', resume_fr: 'Coulage de la dalle du 2ème étage terminé.', alerte: 'non', coherence: 'oui', heure: '09:14' },
     { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Manque de fer à béton signalé, livraison attendue demain.', alerte: 'non', coherence: 'partiel', heure: '11:02' },
-    { chantier_id: 'Villa Cap Spartel', type: 'photo', resume_fr: 'Plâtrage du séjour terminé, photo conforme à la déclaration.', alerte: 'non', coherence: 'oui', heure: '14:37' },
+    { chantier_id: 'Villa Cap Spartel', type: 'photo', resume_fr: 'Plâtrage du séjour terminé, photo confirmée par l\'IA.', alerte: 'non', coherence: 'oui', heure: '14:37' },
     { chantier_id: 'Immeuble Andalous', type: 'texte', resume_fr: 'Absence d\'approvisionnement en eau sur le chantier aujourd\'hui.', alerte: 'oui', coherence: 'oui', heure: '16:50' },
   ];
   document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
@@ -638,7 +638,7 @@ async function loadPaiementsFull() {
       <div class="rapport-icon ok">💰</div>
       <div class="rapport-content">
         <div class="rapport-title">${p.montant.toLocaleString('fr-FR')} ${p.devise} → ${p.beneficiaire}</div>
-        <div class="rapport-sub">${p.chantier} • ${typeLbl} • déclaré via WhatsApp, validé</div>
+        <div class="rapport-sub">${p.chantier} • ${typeLbl} • enregistré via WhatsApp, validé</div>
       </div>
       <div class="rapport-time">${p.date}</div>
     </div>`;
@@ -794,7 +794,7 @@ function renderDemoRapports() {
     {cls:'ok', icon:'✅', titre:'Al Majd — Photo chantier', sub:'Avancement 72% confirmé. Coffrages au 3ème étage terminés.', t:'17:30'},
     {cls:'warn', icon:'⚠️', titre:'Villa Achakar — Vocal darija', sub:'Chef signale retard livraison ciment. Délai estimé +3 jours.', t:'15:12'},
     {cls:'ok', icon:'✅', titre:'Al Majd — Présence équipe', sub:'8 ouvriers présents sur site. GPS confirmé.', t:'09:05'},
-    {cls:'danger', icon:'🚨', titre:'Immeuble Centre — Incohérence', sub:'Déclaration non confirmée par photo. Vérification requise.', t:'08:42'},
+    {cls:'ok', icon:'✅', titre:'Immeuble Centre — Étape confirmée', sub:'Fondations validées par analyse photo.', t:'08:42'},
   ].map(r => `<div class="rapport-item">
     <div class="rapport-icon ${r.cls}">${r.icon}</div>
     <div class="rapport-content">
