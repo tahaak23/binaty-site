@@ -258,9 +258,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="refresh-btn" id="backBtn" onclick="goDashboard()" style="display:none;padding:9px 14px;"><i class="ti ti-arrow-left"></i> Retour</button>
+      <div>
       <div class="topbar-title">Tableau de bord</div>
       <div style="font-size:12px;color:var(--text-3);margin-top:3px;font-family:var(--mono);" id="lastUpdate">Chargement...</div>
+      </div>
     </div>
     <div class="topbar-right">
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
@@ -767,6 +770,7 @@ document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
     document.getElementById('dpanel-' + key).classList.add('on');
     document.querySelector('.topbar-title').textContent = panelTitles[key];
     document.getElementById('refreshBtn').style.display = key === 'dashboard' ? '' : 'none';
+    document.getElementById('backBtn').style.display = key === 'dashboard' ? 'none' : '';
     if (key === 'rapports') loadRapportsFull();
     if (key === 'alertes') loadAlertesFull();
     if (key === 'paiements') loadPaiementsFull();
@@ -856,6 +860,11 @@ function loadMateriauxFull() {
       <div class="rapport-time">${m.date}</div>
     </div>`;
   }).join('');
+}
+
+function goDashboard() {
+  const item = document.querySelector('[data-panel="dashboard"]');
+  if (item) item.click();
 }
 
 function openAlertes() {
