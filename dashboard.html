@@ -229,6 +229,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     <div class="logo-mark"><i class="ti ti-building-skyscraper"></i></div><div>Bina<span>ty</span></div></div>
   <nav class="sidebar-nav">
     <div class="nav-item active" data-panel="dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" data-panel="rapports"><i class="ti ti-file-text"></i> Rapports</div>
+    <div class="nav-item" data-panel="alertes"><i class="ti ti-bell"></i> Alertes</div>
+    <div class="nav-item" data-panel="paiements"><i class="ti ti-cash"></i> Paiements</div>
+    <div class="nav-item" data-panel="materiaux"><i class="ti ti-packages"></i> Matériaux</div>
     <div class="nav-item" data-panel="planning"><i class="ti ti-calendar-time"></i> Planning</div>
     <div class="nav-item" data-panel="documents"><i class="ti ti-folder"></i> Documents</div>
     <div class="nav-item" data-panel="budget"><i class="ti ti-coin"></i> Budget</div>
@@ -364,6 +368,52 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   </div>
 
   </div><!-- /dpanel-dashboard -->
+
+  <!-- RAPPORTS (page complète) -->
+  <div class="dpanel" id="dpanel-rapports">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-file-text"></i> Tous les rapports</div>
+        <span class="card-badge" id="rapportsCount2">--</span>
+      </div>
+      <div id="rapportsListFull"></div>
+    </div>
+  </div>
+
+  <!-- ALERTES (page complète) -->
+  <div class="dpanel" id="dpanel-alertes">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-bell"></i> Toutes les alertes</div>
+        <span class="card-badge" id="alertesCount2">--</span>
+      </div>
+      <div id="alertesListFull"></div>
+    </div>
+  </div>
+
+  <!-- PAIEMENTS -->
+  <div class="dpanel" id="dpanel-paiements">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-cash"></i> Paiements enregistrés</div>
+        <span class="card-badge" id="paiementsTotal">--</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-2);margin:-4px 0 16px;">Chaque paiement annoncé par vos chefs sur WhatsApp (« khalast lmoualim 5000 dh ») est détecté par l'IA, validé, puis archivé ici. Fini les comptes sur un coin de table.</p>
+      <div id="paiementsList"></div>
+    </div>
+  </div>
+
+  <!-- MATÉRIAUX -->
+  <div class="dpanel" id="dpanel-materiaux">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-packages"></i> Registre matériaux</div>
+        <span class="card-badge" id="materiauxCount">--</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-2);margin:-4px 0 16px;">Livraisons et consommations détectées dans les rapports (« wslat 100 sac ciment »). Toute consommation sans livraison correspondante est signalée à vérifier.</p>
+      <div id="materiauxList"></div>
+    </div>
+  </div>
 
   <!-- PLANNING -->
   <div class="dpanel" id="dpanel-planning">
@@ -693,7 +743,7 @@ function renderDemoAlertes() {
 }
 
 // Panels sidebar
-const panelTitles = {dashboard:'Tableau de bord', planning:'Planning', documents:'Documents', budget:'Budget', export:'Export compta'};
+const panelTitles = {dashboard:'Tableau de bord', rapports:'Rapports', alertes:'Alertes', paiements:'Paiements', materiaux:'Matériaux', planning:'Planning', documents:'Documents', budget:'Budget', export:'Export compta'};
 document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -703,8 +753,96 @@ document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
     document.getElementById('dpanel-' + key).classList.add('on');
     document.querySelector('.topbar-title').textContent = panelTitles[key];
     document.getElementById('refreshBtn').style.display = key === 'dashboard' ? '' : 'none';
+    if (key === 'rapports') loadRapportsFull();
+    if (key === 'alertes') loadAlertesFull();
+    if (key === 'paiements') loadPaiementsFull();
+    if (key === 'materiaux') loadMateriauxFull();
   });
 });
+
+// ── Pages complètes (données démo, portées de demo.html) ──
+function loadRapportsFull() {
+  const rapports = [
+    { chantier: 'Résidence Al Manar', type: 'texte', resume: 'Coulage de la dalle du 2ème étage terminé.', alerte: false, ok: true, heure: '09:14' },
+    { chantier: 'Immeuble Andalous', type: 'texte', resume: 'Manque de fer à béton signalé, livraison attendue demain.', alerte: false, ok: false, heure: '11:02' },
+    { chantier: 'Villa Cap Spartel', type: 'photo', resume: "Plâtrage du séjour terminé, photo confirmée par l'IA.", alerte: false, ok: true, heure: '14:37' },
+    { chantier: 'Immeuble Andalous', type: 'texte', resume: "Absence d'approvisionnement en eau sur le chantier aujourd'hui.", alerte: true, ok: true, heure: '16:50' },
+  ];
+  document.getElementById('rapportsCount2').textContent = rapports.length + ' rapports';
+  document.getElementById('rapportsListFull').innerHTML = rapports.map(r => {
+    const cls = r.alerte ? 'danger' : r.ok ? 'ok' : 'warn';
+    const icon = r.alerte ? 'ti-alert-octagon' : r.ok ? 'ti-circle-check' : 'ti-alert-triangle';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${cls}"><i class="ti ${icon}"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${r.chantier} — ${r.type}</div>
+        <div class="rapport-sub">${r.resume}</div>
+      </div>
+      <div class="rapport-time">${r.heure}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadAlertesFull() {
+  const alertes = [
+    { type: 'Approvisionnement', message: "Manque d'eau sur le chantier Immeuble Andalous", niveau: 'medium' },
+    { type: 'Matériaux', message: 'Fer à béton manquant — Immeuble Andalous', niveau: 'medium' },
+    { type: 'Retard', message: 'Ouvriers absents ce matin — Résidence Al Manar', niveau: 'low' },
+  ];
+  document.getElementById('alertesCount2').textContent = alertes.length + ' alertes';
+  document.getElementById('alertesListFull').innerHTML = alertes.map(a => {
+    const icon = a.niveau === 'high' ? 'ti-alert-octagon' : a.niveau === 'medium' ? 'ti-alert-triangle' : 'ti-info-circle';
+    return `<div class="alerte-item ${a.niveau}">
+      <div class="alerte-icon"><i class="ti ${icon}"></i></div>
+      <div>
+        <div class="alerte-title">${a.type}</div>
+        <div class="alerte-sub">${a.message}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadPaiementsFull() {
+  const paiements = [
+    { date: '2025-07-11', montant: 5000, beneficiaire: 'Maalem Abdelkader', type: "Main d'œuvre", chantier: 'Résidence Al Manar' },
+    { date: '2025-07-10', montant: 12400, beneficiaire: 'Fournisseur Drissi Matériaux', type: 'Matériaux', chantier: 'Immeuble Andalous' },
+    { date: '2025-07-09', montant: 3200, beneficiaire: 'Équipe plâtrage', type: "Main d'œuvre", chantier: 'Villa Cap Spartel' },
+    { date: '2025-07-08', montant: 1800, beneficiaire: 'Transport gravier', type: 'Autre', chantier: 'Résidence Al Manar' },
+  ];
+  const total = paiements.reduce((a, p) => a + p.montant, 0);
+  document.getElementById('paiementsTotal').textContent = total.toLocaleString('fr-FR') + ' MAD';
+  document.getElementById('paiementsList').innerHTML = paiements.map(p => `<div class="rapport-item">
+      <div class="rapport-icon ok"><i class="ti ti-cash"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${p.montant.toLocaleString('fr-FR')} MAD → ${p.beneficiaire}</div>
+        <div class="rapport-sub">${p.chantier} • ${p.type} • enregistré via WhatsApp, validé</div>
+      </div>
+      <div class="rapport-time">${p.date}</div>
+    </div>`).join('');
+}
+
+function loadMateriauxFull() {
+  const mouvements = [
+    { date: '2025-07-11', livraison: true, materiau: 'Ciment', quantite: '100 sacs', chantier: 'Résidence Al Manar', flag: false },
+    { date: '2025-07-11', livraison: false, materiau: 'Ciment', quantite: '40 sacs', chantier: 'Résidence Al Manar', flag: false },
+    { date: '2025-07-10', livraison: false, materiau: 'Fer à béton', quantite: '300 kg', chantier: 'Immeuble Andalous', flag: true },
+    { date: '2025-07-09', livraison: true, materiau: 'Sable', quantite: '3 camions', chantier: 'Villa Cap Spartel', flag: false },
+  ];
+  const aVerifier = mouvements.filter(m => m.flag).length;
+  document.getElementById('materiauxCount').textContent = mouvements.length + ' mouvements' + (aVerifier ? ' • ' + aVerifier + ' à vérifier' : '');
+  document.getElementById('materiauxList').innerHTML = mouvements.map(m => {
+    const cls = m.flag ? 'warn' : m.livraison ? 'ok' : 'danger';
+    const icon = m.flag ? 'ti-alert-triangle' : m.livraison ? 'ti-package-import' : 'ti-package-export';
+    return `<div class="rapport-item">
+      <div class="rapport-icon ${m.flag ? 'warn' : m.livraison ? 'ok' : 'warn'}"><i class="ti ${icon}"></i></div>
+      <div class="rapport-content">
+        <div class="rapport-title">${m.livraison ? 'Livraison' : 'Consommation'} — ${m.quantite} ${m.materiau}</div>
+        <div class="rapport-sub">${m.chantier}${m.flag ? ' • consommation sans livraison correspondante — à vérifier' : ''}</div>
+      </div>
+      <div class="rapport-time">${m.date}</div>
+    </div>`;
+  }).join('');
+}
 
 function toast(msg) {
   const t = document.getElementById('toastBox');
